@@ -16,3 +16,4 @@ layout: default
     </article>
   {% endfor %}
 </div>
+
