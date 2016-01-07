@@ -1,10 +1,6 @@
 ---
 layout: post
-title: You're up and running!
+title: 欢迎来到山川的小窝
 ---
 
-Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).
-
-![_config.yml]({{ site.baseurl }}/images/config.png)
-
-The easiest way to make your first post is to edit this one. Go into /_posts/ and update the Hello World markdown file. For more instructions head over to the [Jekyll Now repository](https://github.com/barryclark/jekyll-now) on GitHub.
+山川是一只领养的小狗，现在三岁了，这个网站是为了记录山川的日常生活。
