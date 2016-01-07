@@ -16,5 +16,5 @@ permalink: /about/
 
 ### Contact me
 
-​	[Gmail](mailto:zhoulujue@gmail.com)
+​	[Gmail](mailto:zhoulujue@shanchuan.dog)
 
