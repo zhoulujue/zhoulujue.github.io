@@ -12,7 +12,7 @@ permalink: /about/
 
 ### More Information
 
-​	[github](github.com/zhoulujue)
+​	[github](https://github.com/zhoulujue)
 
 ### Contact me
 
