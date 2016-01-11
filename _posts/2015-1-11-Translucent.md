@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Translucent 和 Transition的冲突
+title: Android : Translucent 和 Transition的冲突
 ---
   
     
