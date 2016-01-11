@@ -13,8 +13,11 @@ title: Translucent 和 Transition的冲突
 原因是 Theme.Translucent 里使用了这个属性
 
 
-    <!-- Note that we use the base animation style here (that is no animations) because we really have no idea how this kind ofactivity will be used. -->
-    <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    <!-- Note that we use the base animation style here (that is no animations) 
+         because we really have no idea how this kind ofactivity will be used. -->
+    <item name="android:windowAnimationStyle">
+         @android:style/Animation
+    </item>
     
 
 
