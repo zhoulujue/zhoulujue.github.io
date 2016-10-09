@@ -23,7 +23,7 @@ footer-links:
   flickr:
   github: zhoulujue
   instagram: zhoulujue
-  linkedin: 
+  linkedin:
   pinterest:
   rss: asdasd# just type anything here for a working RSS icon
   twitter: MichaelZhouJay
@@ -38,7 +38,7 @@ footer-links:
 
 comments :
   provider : duoshuo
-  duoshuo : 
+  duoshuo :
     short_name : shanchuan
 
 # Enter your Google Analytics web tracking code (e.g. UA-2110908-2) to activate tracking
@@ -58,7 +58,6 @@ baseurl: ""
 # !! You don't need to change any of the configuration flags below !!
 #
 
-markdown: redcarpet
 highlighter: pygments
 permalink: /:title/
 
