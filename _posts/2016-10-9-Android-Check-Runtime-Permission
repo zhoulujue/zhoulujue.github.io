@@ -12,7 +12,9 @@ API Level 23 的 ContextCompact.checkSelfPermission() 在 小于 23 时，永远
 这个 PermissionChecker support-v4 lib 里新出的API
 
 需要 在build.gradle 里
+
           compile ‘com.android.support:support-v4:23.1.1’
+
 注意版本号，版本号较低的没有这个API
 
 首先检查是否在安装时申请并授予了指定权限，如果没有再查询AppOps是否是在安装后被用户使用AppOps revoke 了权限。
