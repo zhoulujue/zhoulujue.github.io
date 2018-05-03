@@ -12,13 +12,13 @@ title: Android － Translucent 和 Transition的冲突
 
 原因是 Theme.Translucent 里使用了这个属性
 
-
-    <!-- Note that we use the base animation style here (that is no animations) 
-         because we really have no idea how this kind ofactivity will be used. -->
-    <item name="android:windowAnimationStyle">
-         @android:style/Animation
-    </item>
-    
+```xml
+<!-- Note that we use the base animation style here (that is no animations)
+     because we really have no idea how this kind ofactivity will be used. -->
+<item name="android:windowAnimationStyle">
+     @android:style/Animation
+</item>
+```
 
 
 我的解决方案是，不集成 Theme.Translucent 而是将 Theme.Translucent 所有的属性拷贝到自己的Theme里，然后去掉这个android:windowAnimationStyle，重现build and run 就好了
