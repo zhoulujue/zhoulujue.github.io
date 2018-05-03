@@ -90,3 +90,8 @@ exclude:
     - LICENSE
     - README.md
     - CNAME
+
+title: 欢迎来到山川的窝
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
