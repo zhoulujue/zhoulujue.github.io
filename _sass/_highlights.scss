@@ -1,17 +1,19 @@
-
 .highlight {
-  background-color: #efefef;
-  padding: 7px 7px 7px 10px;
-  border: 1px solid #ddd;
-  -moz-box-shadow: 3px 3px rgba(0,0,0,0.1);
-  -webkit-box-shadow: 3px 3px rgba(0,0,0,0.1);
-  box-shadow: 3px 3px rgba(0,0,0,0.1);
-  margin: 20px 0 20px 0;
-  overflow: scroll;
+  background-color: $darkerGray;
+  padding: 5px 10px;
+  margin: 20px 0;
+}
+
+.highlight pre {
+  /* overflow: scroll; Prefer no word wrap? Uncomment this line and comment out the 2 lines below. */
+  word-break: break-all;
+  word-wrap: break-word;
 }
 
 code {
-  font-family:'Bitstream Vera Sans Mono','Courier', monospace;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 12px;
+  color: #999
 }
 
 .highlight .c { color: #586E75 } /* Comment */
