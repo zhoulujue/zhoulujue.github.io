@@ -7,11 +7,9 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
 
 最近项目中有需要对视频进行编辑的需求，总体分析有如下技术上需要实现的点：
 
-        1.需要支持视频尺寸裁剪，给出左上角和右下角的坐标后裁剪两个点描述的区域；
-
-        2.需要支持帧预览，裁剪前需要向用户展示时间线上的预览图；
-
-        3.需要支持截取视频，给出开始时间和结束时间后截取这两个时间点之间的视频段落。
+    1.需要支持视频尺寸裁剪，给出左上角和右下角的坐标后裁剪两个点描述的区域；
+    2.需要支持帧预览，裁剪前需要向用户展示时间线上的预览图；
+    3.需要支持截取视频，给出开始时间和结束时间后截取这两个时间点之间的视频段落。
 
 ---
 
@@ -23,16 +21,16 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
 
 1. **MediaCodec 尺寸裁减**
 
-    首先用 inputBuffers 读取帧数据到 outputBuffers，如果需要使用 MediaCodec 裁减尺寸，按照上图 MediaCodec 的流程以及官方的文档，需要在处理 output buffer 时将每一帧的数据处理为 bitmap 然后根据左上角的坐标和右下角的坐标对图像进行裁减 [Bitmap.createBitmap][1]
+首先用 inputBuffers 读取帧数据到 outputBuffers，如果需要使用 MediaCodec 裁减尺寸，按照上图 MediaCodec 的流程以及官方的文档，需要在处理 output buffer 时将每一帧的数据处理为 bitmap 然后根据左上角的坐标和右下角的坐标对图像进行裁减 [Bitmap.createBitmap][1]
 实际上这样裁减的过程还是在利用 CPU 来进行裁减
 
 2. **MediaCodec 取帧**
 
-    使用[MediaMetadataRetriever](https://developer.android.com/reference/android/media/MediaMetadataRetriever.html)
+使用[MediaMetadataRetriever](https://developer.android.com/reference/android/media/MediaMetadataRetriever.html)
 
 3. **MediaCodec 截取**
 
-    截取实际上在第一步的 output 就可以做了，因为 outputbuffer 里每一帧的数据就有时间戳信息，[MediaCodec.BufferInfo.presentationTimeUs](https://developer.android.com/reference/android/media/MediaCodec.BufferInfo.html#presentationTimeUs)
+截取实际上在第一步的 output 就可以做了，因为 outputbuffer 里每一帧的数据就有时间戳信息，[MediaCodec.BufferInfo.presentationTimeUs](https://developer.android.com/reference/android/media/MediaCodec.BufferInfo.html#presentationTimeUs)
 
 ---
 
