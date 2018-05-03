@@ -14,6 +14,7 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
         3.需要支持截取视频，给出开始时间和结束时间后截取这两个时间点之间的视频段落。
 
 ---
+
 ## MediaCodec 方案
 
 首先，按照 Android 官方的文档推荐，当然首推 MediaCodec。
@@ -30,9 +31,11 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
     使用[MediaMetadataRetriever](https://developer.android.com/reference/android/media/MediaMetadataRetriever.html)
 
 3. **MediaCodec 截取**
-    
+
     截取实际上在第一步的 output 就可以做了，因为 outputbuffer 里每一帧的数据就有时间戳信息，[MediaCodec.BufferInfo.presentationTimeUs](https://developer.android.com/reference/android/media/MediaCodec.BufferInfo.html#presentationTimeUs)
+
 ---
+
 ## MediaCodec 的问题
 
 怎么样，看起来这套方案还是不错的，但是实际操作下来有几个严重的问题：
@@ -53,7 +56,9 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
 于是决定弃用 MediaCodec 转投如日中天的 FFmpeg。
 
 ---
+
 ## FFmpeg
+
 FFmpeg 由于其丰富的 codec 插件，详细的文档说明，并且与其调试复杂量大的编解码代码(是的，用 MediaCodec 实现起来十分啰嗦和繁琐)还是不如调试一行 ffmpeg 命令来的简单。
 
 利用 FFmpeg 做视频编辑大家一般都会去参考这个 [repo](https://github.com/WritingMinds/ffmpeg-android-java) ，但是他的 asset 里面的 ffmpeg 大小高达 18MB，即使压缩进 APK 包里也会达到 9MB。对 APK 大小敏感的开发者肯定颇有微词。
@@ -63,6 +68,7 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
 于是，果断放弃这种方式，转而编译 ffmpeg 的 so 库，动态加载然后执行命令。听起来不错，对不对？动态库的大小肯定比 ffmpeg-android-java 的 executable 要小多了，而且自己编译 ffmpeg 还能对其进行裁减。
 
 ---
+
 ## 交叉编译 FFmpeg 及 x264
 
 相信很多开发者都会使用 ijkplayer，ijkplayer 底层也用到了 ffmpeg，ijk使用的是 so 库的形式，libffmpeg.so。所以最理想的状态是，重新编译一个公共的 libffmpeg.so，这个 libffmpeg.so 即有 ijk 需要的 decoders 和视频编辑模块需要的 encoders。但是一旦 ijk 或者 ffmpeg 有升级就会很麻烦，因为得重新编译一次 ffmpeg，而且还得 fork ijkplayer，然后每当 ijk 更新的时候将 ijkplayer master 合并到你 fork 分支，视频播放又是很常用的模块，很难做到“无痛”升级。
@@ -201,7 +207,9 @@ say "Your building has been completed!"
 8. 到此，你已经拥有了能在 arm 平台上 load 的 so 文件
 
 ---
-## 编写 jni 来调用 ffmpeg 
+
+## 编写 jni 来调用 ffmpeg
+
 在上面的编译脚本中，我们考虑到 so 的输出大小，configure 中有这么一行 `--disable-ffmpeg`，意为不编译 ffmpeg 的可执行文件，这样我们就没有 ffmpeg 的执行入口，相当于没有 `main()`函数。所以，我们需要为这些 so 文件编写一个命令执行的入口，这方面也有超多的教程，过程就不深究了，同样这里也只记录一下编译步骤：
 
 0. 在你的 Android Studio 工程里新建一个目录，例如： jni/
@@ -326,6 +334,7 @@ include $(BUILD_SHARED_LIBRARY)
 5. 到这里，你已经拥有了可以动态 load 的 so 库，并且可以执行 ffmpeg command 了！
 
 ---
+
 ## 集成 FFmpegMediaMetadataRetriever
 
 相信很多开发者对这个库都不会陌生[FFmpegMediaMetadataRetriever](https://github.com/wseemann/FFmpegMediaMetadataRetriever)，正如上面所说，原生的 MediaMetadataRetriever 不太好用，这个开源库被我们用来取预览帧：给出时间点，返回 bitmap。
@@ -392,6 +401,7 @@ include $(BUILD_SHARED_LIBRARY)
 5. 到这里，你已经或得了可以运行的 FFmpegMediaMetadataRetriever，并且复用了用于视频编辑模块的 ffmpeg
 
 ---
+
 ## 后续
 
 如果你需要任何帮助，可以参考我的开源库[zhoulujue/ffmpeg-commands-executor-library](https://github.com/zhoulujue/ffmpeg-commands-executor-library)， fork 的 [dxjia/ffmpeg-commands-executor-library](https://github.com/dxjia/ffmpeg-commands-executor-library) 仓库。
