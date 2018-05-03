@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: 利用 FFmpeg 在 Android 上做视频编辑
 ---
 
@@ -7,9 +7,12 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
 
 最近项目中有需要对视频进行编辑的需求，总体分析有如下技术上需要实现的点：
 
-    1.需要支持视频尺寸裁剪，给出左上角和右下角的坐标后裁剪两个点描述的区域；
-    2.需要支持帧预览，裁剪前需要向用户展示时间线上的预览图；
-    3.需要支持截取视频，给出开始时间和结束时间后截取这两个时间点之间的视频段落。
+1. 需要支持视频尺寸裁剪，给出左上角和右下角的坐标后裁剪两个点描述的区域；
+
+1. 需要支持帧预览，裁剪前需要向用户展示时间线上的预览图；
+
+1. 需要支持截取视频，给出开始时间和结束时间后截取这两个时间点之间的视频段落。
+
 
 ---
 
@@ -21,16 +24,16 @@ title: 利用 FFmpeg 在 Android 上做视频编辑
 
 1. **MediaCodec 尺寸裁减**
 
-首先用 inputBuffers 读取帧数据到 outputBuffers，如果需要使用 MediaCodec 裁减尺寸，按照上图 MediaCodec 的流程以及官方的文档，需要在处理 output buffer 时将每一帧的数据处理为 bitmap 然后根据左上角的坐标和右下角的坐标对图像进行裁减 [Bitmap.createBitmap][1]
+    首先用 inputBuffers 读取帧数据到 outputBuffers，如果需要使用 MediaCodec 裁减尺寸，按照上图 MediaCodec 的流程以及官方的文档，需要在处理 output buffer 时将每一帧的数据处理为 bitmap 然后根据左上角的坐标和右下角的坐标对图像进行裁减 [Bitmap.createBitmap][1]
 实际上这样裁减的过程还是在利用 CPU 来进行裁减
 
 2. **MediaCodec 取帧**
 
-使用[MediaMetadataRetriever](https://developer.android.com/reference/android/media/MediaMetadataRetriever.html)
+    使用[MediaMetadataRetriever](https://developer.android.com/reference/android/media/MediaMetadataRetriever.html)
 
 3. **MediaCodec 截取**
 
-截取实际上在第一步的 output 就可以做了，因为 outputbuffer 里每一帧的数据就有时间戳信息，[MediaCodec.BufferInfo.presentationTimeUs](https://developer.android.com/reference/android/media/MediaCodec.BufferInfo.html#presentationTimeUs)
+    截取实际上在第一步的 output 就可以做了，因为 outputbuffer 里每一帧的数据就有时间戳信息，[MediaCodec.BufferInfo.presentationTimeUs](https://developer.android.com/reference/android/media/MediaCodec.BufferInfo.html#presentationTimeUs)
 
 ---
 
@@ -78,52 +81,53 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
 1. 同步 x264 的 [repo](https://github.com/yixia/x264)，这里我选择的是 YIXIA INC 的 mirror.
 
 2. 编写编译脚本：
-```
-#!/bin/bash
 
-if [ -z "$ANDROID_NDK" ]; then
-	echo "You must define ANDROID_NDK before starting."
-	echo "They must point to your NDK directories.\n"
-	exit 1
-fi
+    ```bash
+    #!/bin/bash
 
-# Detect OS
-OS=`uname`
-HOST_ARCH=`uname -m`
-export CCACHE=; type ccache >/dev/null 2>&1 && export CCACHE=ccache
-if [ $OS == 'Linux' ]; then
-	export HOST_SYSTEM=linux-$HOST_ARCH
-elif [ $OS == 'Darwin' ]; then
-	export HOST_SYSTEM=darwin-$HOST_ARCH
-fi
+    if [ -z "$ANDROID_NDK" ]; then
+    	echo "You must define ANDROID_NDK before starting."
+    	echo "They must point to your NDK directories.\n"
+    	exit 1
+    fi
 
-NDK=/Users/xxx/Library/Android/sdk/ndk-bundle
+    # Detect OS
+    OS=`uname`
+    HOST_ARCH=`uname -m`
+    export CCACHE=; type ccache >/dev/null 2>&1 && export CCACHE=ccache
+    if [ $OS == 'Linux' ]; then
+    	export HOST_SYSTEM=linux-$HOST_ARCH
+    elif [ $OS == 'Darwin' ]; then
+    	export HOST_SYSTEM=darwin-$HOST_ARCH
+    fi
 
-SOURCE=`pwd`
-PREFIX=$SOURCE/build/android
-TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
-SYSROOT=$NDK/platforms/android-16/arch-arm/
-ADDI_CFLAGS="-marm"
-#EXTRA_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon -D__ARM_ARCH_7__ -D__ARM_ARCH_7A__"
-#EXTRA_LDFLAGS="-nostdlib"
+    NDK=/Users/xxx/Library/Android/sdk/ndk-bundle
 
-./configure  --prefix=$PREFIX \
-	--cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \
-	--enable-pic \
-	--enable-shared \
-	--enable-static \
-	--enable-strip \
-	--disable-cli \
-	--host=arm-linux \
-	--sysroot=$SYSROOT \
-	--extra-cflags="-Os -fpic $ADDI_CFLAGS $EXTRA_CFLAGS" \
-	--extra-ldflags="$ADDI_LDFLAGS $EXTRA_LDFLAGS"
+    SOURCE=`pwd`
+    PREFIX=$SOURCE/build/android
+    TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
+    SYSROOT=$NDK/platforms/android-16/arch-arm/
+    ADDI_CFLAGS="-marm"
+    #EXTRA_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon -D__ARM_ARCH_7__ -D__ARM_ARCH_7A__"
+    #EXTRA_LDFLAGS="-nostdlib"
 
-make clean
-make STRIP= -j4 install || exit 1
-```
+    ./configure  --prefix=$PREFIX \
+    	--cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \
+    	--enable-pic \
+    	--enable-shared \
+    	--enable-static \
+    	--enable-strip \
+    	--disable-cli \
+    	--host=arm-linux \
+    	--sysroot=$SYSROOT \
+    	--extra-cflags="-Os -fpic $ADDI_CFLAGS $EXTRA_CFLAGS" \
+    	--extra-ldflags="$ADDI_LDFLAGS $EXTRA_LDFLAGS"
 
-![x264编译脚本](http://upload-images.jianshu.io/upload_images/96392-10f483096db54135.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    make clean
+    make STRIP= -j4 install || exit 1
+    ```
+
+    ![x264编译脚本](http://upload-images.jianshu.io/upload_images/96392-10f483096db54135.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 3. 找到x264 repo 的根目录下的 configure 文件，找到 `echo "SONAME=libx264.so.$API" >> config.mak` 改为 `echo "SONAME=libx264-$API.so" >> config.mak`
@@ -133,72 +137,73 @@ make STRIP= -j4 install || exit 1
 5. 接下来编译 FFmpeg, 先同步 ffmpeg 的 [repo](https://github.com/FFmpeg/FFmpeg)
 
 6. 编写编译脚本：
-```
-#!/bin/bash
-export TMPDIR=/Users/xxx/ffmpegbuilddir/temp/
-NDK=/Users/xxx/Library/Android/sdk/ndk-bundle
-SYSROOT=$NDK/platforms/android-16/arch-arm/
-TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 
-CPU=arm
-PREFIX=/Users/xxx/ffmpegbuilddir/ffmpeg-install-dir/arm/
-ADDI_CFLAGS="-marm"
+    ```
+    #!/bin/bash
+    export TMPDIR=/Users/xxx/ffmpegbuilddir/temp/
+    NDK=/Users/xxx/Library/Android/sdk/ndk-bundle
+    SYSROOT=$NDK/platforms/android-16/arch-arm/
+    TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 
-# 加入x264编译库
-EXTRA_DIR=./../path/to/your/x264/repo/build/android
-EXTRA_CFLAGS="-I./${EXTRA_DIR}/include"
-EXTRA_LDFLAGS="-L./${EXTRA_DIR}/lib"
+    CPU=arm
+    PREFIX=/Users/xxx/ffmpegbuilddir/ffmpeg-install-dir/arm/
+    ADDI_CFLAGS="-marm"
 
-function build_one
-{
-./configure \
---prefix=$PREFIX \
---enable-gpl \
---enable-libx264 \
---enable-shared \
---enable-filter=crop \
---enable-filter=rotate \
---enable-filter=scale \
---disable-encoders \
---enable-encoder=mpeg4 \
---enable-encoder=aac \
---enable-encoder=png \
---enable-encoder=libx264 \
---enable-encoder=gif \
---disable-decoders \
---enable-decoder=mpeg4 \
---enable-decoder=h264 \
---enable-decoder=aac \
---enable-decoder=gif \
---enable-parser=h264 \
---disable-static \
---disable-doc \
---disable-ffmpeg \
---disable-ffplay \
---disable-ffprobe \
---disable-ffserver \
---disable-doc \
---disable-symver \
---enable-small \
---cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \
---target-os=linux \
---arch=arm \
---enable-cross-compile \
---sysroot=$SYSROOT \
---extra-cflags="-Os -fpic $ADDI_CFLAGS $EXTRA_CFLAGS" \
---extra-ldflags="$ADDI_LDFLAGS $EXTRA_LDFLAGS" \
-$ADDITIONAL_CONFIGURE_FLAG
-make clean
-make
-make install
+    # 加入x264编译库
+    EXTRA_DIR=./../path/to/your/x264/repo/build/android
+    EXTRA_CFLAGS="-I./${EXTRA_DIR}/include"
+    EXTRA_LDFLAGS="-L./${EXTRA_DIR}/lib"
 
-}
+    function build_one
+    {
+    ./configure \
+    --prefix=$PREFIX \
+    --enable-gpl \
+    --enable-libx264 \
+    --enable-shared \
+    --enable-filter=crop \
+    --enable-filter=rotate \
+    --enable-filter=scale \
+    --disable-encoders \
+    --enable-encoder=mpeg4 \
+    --enable-encoder=aac \
+    --enable-encoder=png \
+    --enable-encoder=libx264 \
+    --enable-encoder=gif \
+    --disable-decoders \
+    --enable-decoder=mpeg4 \
+    --enable-decoder=h264 \
+    --enable-decoder=aac \
+    --enable-decoder=gif \
+    --enable-parser=h264 \
+    --disable-static \
+    --disable-doc \
+    --disable-ffmpeg \
+    --disable-ffplay \
+    --disable-ffprobe \
+    --disable-ffserver \
+    --disable-doc \
+    --disable-symver \
+    --enable-small \
+    --cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \
+    --target-os=linux \
+    --arch=arm \
+    --enable-cross-compile \
+    --sysroot=$SYSROOT \
+    --extra-cflags="-Os -fpic $ADDI_CFLAGS $EXTRA_CFLAGS" \
+    --extra-ldflags="$ADDI_LDFLAGS $EXTRA_LDFLAGS" \
+    $ADDITIONAL_CONFIGURE_FLAG
+    make clean
+    make
+    make install
 
-build_one
-say "Your building has been completed!"
-```
+    }
 
-![FFmpeg shared lib 编译脚本](http://upload-images.jianshu.io/upload_images/96392-437dec338d700f60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    build_one
+    say "Your building has been completed!"
+    ```
+
+    ![FFmpeg shared lib 编译脚本](http://upload-images.jianshu.io/upload_images/96392-437dec338d700f60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 7. 执行编译脚本，编译结果会在 /Users/xxx/ffmpegbuilddir/ffmpeg-install-dir/arm/ 目录下
 
@@ -215,116 +220,117 @@ say "Your building has been completed!"
 1. 将 ffmpeg repo 中的 ffmpeg.c、ffmpeg.h、FFmpegNativeHelper.c、cmdutils.c、ffmpeg_opt.c、ffmpeg_filter.c、show_func_wrapper.c 拷贝到 jni
 
 2. 编写 makefile:
-```
-ifeq ($(APP_ABI), x86)
-LIB_NAME_PLUS := x86
-else
-LIB_NAME_PLUS := armeabi
-endif
 
-LOCAL_PATH:= $(call my-dir)
+    ```makefile
+    ifeq ($(APP_ABI), x86)
+    LIB_NAME_PLUS := x86
+    else
+    LIB_NAME_PLUS := armeabi
+    endif
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := x264-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libx264-148.so
-include $(PREBUILT_SHARED_LIBRARY)
+    LOCAL_PATH:= $(call my-dir)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE:= avcodec-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavcodec-57.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := x264-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libx264-148.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE:= avdevice-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavdevice-57.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE:= avcodec-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavcodec-57.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE:= avfilter-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavfilter-6.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE:= avdevice-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavdevice-57.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE:= avformat-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavformat-57.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE:= avfilter-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavfilter-6.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE :=  avutil-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libavutil-55.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE:= avformat-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES:= prebuilt/$(LIB_NAME_PLUS)/libavformat-57.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := swresample-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libswresample-2.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE :=  avutil-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libavutil-55.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := swscale-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libswscale-4.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := swresample-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libswresample-2.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := postproc-prebuilt-$(LIB_NAME_PLUS)
-LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libpostproc-54.so
-include $(PREBUILT_SHARED_LIBRARY)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := swscale-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libswscale-4.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := postproc-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_SRC_FILES := prebuilt/$(LIB_NAME_PLUS)/libpostproc-54.so
+    include $(PREBUILT_SHARED_LIBRARY)
 
-LOCAL_MODULE := libffmpegjni
+    include $(CLEAR_VARS)
 
-ifeq ($(APP_ABI), x86)
-TARGET_ARCH:=x86
-TARGET_ARCH_ABI:=x86
-else
-LOCAL_ARM_MODE := arm
-endif
+    LOCAL_MODULE := libffmpegjni
 
-LOCAL_SRC_FILES := FFmpegNativeHelper.c \
-                   cmdutils.c \
-                   ffmpeg_opt.c \
-                   ffmpeg_filter.c \
-                   show_func_wrapper.c
+    ifeq ($(APP_ABI), x86)
+    TARGET_ARCH:=x86
+    TARGET_ARCH_ABI:=x86
+    else
+    LOCAL_ARM_MODE := arm
+    endif
 
-LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lz
+    LOCAL_SRC_FILES := FFmpegNativeHelper.c \
+                       cmdutils.c \
+                       ffmpeg_opt.c \
+                       ffmpeg_filter.c \
+                       show_func_wrapper.c
 
-LOCAL_SHARED_LIBRARIES:= avcodec-prebuilt-$(LIB_NAME_PLUS) \
-                         avdevice-prebuilt-$(LIB_NAME_PLUS) \
-                         avfilter-prebuilt-$(LIB_NAME_PLUS) \
-                         avformat-prebuilt-$(LIB_NAME_PLUS) \
-                         avutil-prebuilt-$(LIB_NAME_PLUS) \
-                         swresample-prebuilt-$(LIB_NAME_PLUS) \
-                         swscale-prebuilt-$(LIB_NAME_PLUS) \
-                         postproc-prebuilt-$(LIB_NAME_PLUS) \
-                         x264-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lz
 
-LOCAL_C_INCLUDES += -L$(SYSROOT)/usr/include
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
+    LOCAL_SHARED_LIBRARIES:= avcodec-prebuilt-$(LIB_NAME_PLUS) \
+                             avdevice-prebuilt-$(LIB_NAME_PLUS) \
+                             avfilter-prebuilt-$(LIB_NAME_PLUS) \
+                             avformat-prebuilt-$(LIB_NAME_PLUS) \
+                             avutil-prebuilt-$(LIB_NAME_PLUS) \
+                             swresample-prebuilt-$(LIB_NAME_PLUS) \
+                             swscale-prebuilt-$(LIB_NAME_PLUS) \
+                             postproc-prebuilt-$(LIB_NAME_PLUS) \
+                             x264-prebuilt-$(LIB_NAME_PLUS)
 
-ifeq ($(APP_ABI), x86)
-LOCAL_CFLAGS := -DUSE_X86_CONFIG
-else
-LOCAL_CFLAGS := -DUSE_ARM_CONFIG
-endif
+    LOCAL_C_INCLUDES += -L$(SYSROOT)/usr/include
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 
-include $(BUILD_SHARED_LIBRARY)
-```
+    ifeq ($(APP_ABI), x86)
+    LOCAL_CFLAGS := -DUSE_X86_CONFIG
+    else
+    LOCAL_CFLAGS := -DUSE_ARM_CONFIG
+    endif
 
-![Jni 目录结构](http://upload-images.jianshu.io/upload_images/96392-717ab98dd9b6424c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    include $(BUILD_SHARED_LIBRARY)
+    ```
+
+    ![Jni 目录结构](http://upload-images.jianshu.io/upload_images/96392-717ab98dd9b6424c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 3. 编写 java 代码，声明 Java native method
 
-![Java 代码](http://upload-images.jianshu.io/upload_images/96392-eb8a7d39afa89c9f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![Java 代码](http://upload-images.jianshu.io/upload_images/96392-eb8a7d39afa89c9f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 修改 ffmpeg.c 文件，绑定 jni 方法名与 ffmpeg.c 的方法名
 
-![绑定方法名称](http://upload-images.jianshu.io/upload_images/96392-67191c48eb8a3b08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![绑定方法名称](http://upload-images.jianshu.io/upload_images/96392-67191c48eb8a3b08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 在 jni 目录下执行 `ndk-build APP_ABI=armeabi`
 
 
-![编译 libffmpegjni.so ](http://upload-images.jianshu.io/upload_images/96392-1f1b2ba94605bc06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![编译 libffmpegjni.so ](http://upload-images.jianshu.io/upload_images/96392-1f1b2ba94605bc06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 4. 在 libs/armeabi 目录下得到 libffmpegjni.so
@@ -346,55 +352,56 @@ include $(BUILD_SHARED_LIBRARY)
 1. 将 FFmpegMediaMetadataRetriever repo 下 `FFmpegMediaMetadataRetriever/gradle/fmmr-library/library/src/main/jni/metadata` 的 .c 、.h、.cpp 文件都拷贝到上述的 jni 文件夹中
 
 2. 打开上面章节我们编写的 makefile，添加如下代码：
-```
-include $(CLEAR_VARS)
-LOCAL_MODULE  := ffmpeg_mediametadataretriever_jni
 
-ifeq ($(APP_ABI), x86)
-TARGET_ARCH:=x86
-TARGET_ARCH_ABI:=x86
-else
-LOCAL_ARM_MODE := arm
-endif
+    ```makefile
+    include $(CLEAR_VARS)
+    LOCAL_MODULE  := ffmpeg_mediametadataretriever_jni
 
-LOCAL_SRC_FILES  :=  wseemann_media_MediaMetadataRetriever.cpp \
-                     mediametadataretriever.cpp \
-                     ffmpeg_mediametadataretriever.c \
-                     ffmpeg_utils.c
+    ifeq ($(APP_ABI), x86)
+    TARGET_ARCH:=x86
+    TARGET_ARCH_ABI:=x86
+    else
+    LOCAL_ARM_MODE := arm
+    endif
 
-LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lz
-LOCAL_LDLIBS += -landroid
-LOCAL_LDLIBS += -ljnigraphics
+    LOCAL_SRC_FILES  :=  wseemann_media_MediaMetadataRetriever.cpp \
+                         mediametadataretriever.cpp \
+                         ffmpeg_mediametadataretriever.c \
+                         ffmpeg_utils.c
 
-LOCAL_SHARED_LIBRARIES:= avcodec-prebuilt-$(LIB_NAME_PLUS) \
-                         avdevice-prebuilt-$(LIB_NAME_PLUS) \
-                         avfilter-prebuilt-$(LIB_NAME_PLUS) \
-                         avformat-prebuilt-$(LIB_NAME_PLUS) \
-                         avutil-prebuilt-$(LIB_NAME_PLUS) \
-                         swresample-prebuilt-$(LIB_NAME_PLUS) \
-                         swscale-prebuilt-$(LIB_NAME_PLUS) \
-                         postproc-prebuilt-$(LIB_NAME_PLUS) \
-                         x264-prebuilt-$(LIB_NAME_PLUS)
+    LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -lz
+    LOCAL_LDLIBS += -landroid
+    LOCAL_LDLIBS += -ljnigraphics
 
-LOCAL_C_INCLUDES += -L$(SYSROOT)/usr/include
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
+    LOCAL_SHARED_LIBRARIES:= avcodec-prebuilt-$(LIB_NAME_PLUS) \
+                             avdevice-prebuilt-$(LIB_NAME_PLUS) \
+                             avfilter-prebuilt-$(LIB_NAME_PLUS) \
+                             avformat-prebuilt-$(LIB_NAME_PLUS) \
+                             avutil-prebuilt-$(LIB_NAME_PLUS) \
+                             swresample-prebuilt-$(LIB_NAME_PLUS) \
+                             swscale-prebuilt-$(LIB_NAME_PLUS) \
+                             postproc-prebuilt-$(LIB_NAME_PLUS) \
+                             x264-prebuilt-$(LIB_NAME_PLUS)
 
-ifeq ($(APP_ABI), x86)
-LOCAL_CFLAGS := -DUSE_X86_CONFIG
-else
-LOCAL_CFLAGS := -DUSE_ARM_CONFIG
-endif
+    LOCAL_C_INCLUDES += -L$(SYSROOT)/usr/include
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 
-include $(BUILD_SHARED_LIBRARY)
-```
+    ifeq ($(APP_ABI), x86)
+    LOCAL_CFLAGS := -DUSE_X86_CONFIG
+    else
+    LOCAL_CFLAGS := -DUSE_ARM_CONFIG
+    endif
+
+    include $(BUILD_SHARED_LIBRARY)
+    ```
 
 3. 重新执行 `ndk-build APP_ABI=armeabi` ，将在 `libs/armeabi` 下得到 lib ffmpeg_mediametadataretriever_jni.so
 
-![ffmpeg_mediametadataretriever_jni 编译结果](http://upload-images.jianshu.io/upload_images/96392-23be348a1fd652c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![ffmpeg_mediametadataretriever_jni 编译结果](http://upload-images.jianshu.io/upload_images/96392-23be348a1fd652c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 4. 将 FFmpegMediaMetadataRetriever repo 中 的 Java 类`FFmpegMediaMetadataRetriever.java`拷贝到你的项目中，注意要改一下 so load 的过程：
 
-![修改 FFmpegMediaMetadataRetriever.java ](http://upload-images.jianshu.io/upload_images/96392-50199822650ec0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![修改 FFmpegMediaMetadataRetriever.java ](http://upload-images.jianshu.io/upload_images/96392-50199822650ec0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 5. 到这里，你已经或得了可以运行的 FFmpegMediaMetadataRetriever，并且复用了用于视频编辑模块的 ffmpeg
 
