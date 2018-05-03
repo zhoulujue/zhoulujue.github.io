@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 title: 利用 FFmpeg 在 Android 上做视频编辑
 ---
 
