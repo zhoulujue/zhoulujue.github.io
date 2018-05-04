@@ -120,6 +120,8 @@ img {
 .date {
   font-style: italic;
   color: $gray;
+  padding: 20px 0;
+  border-top: 2px solid $lightGray;
 }
 
 // Specify the color of the selection
@@ -164,6 +166,17 @@ img {
     text-align: center;
   }
 }
+
+.copyright {
+  padding: 30px 0;
+  border-top: 2px solid $lightGray; 
+  border-bottom: 2px solid $lightGray;
+
+  @include mobile {
+    text-align: center;
+  }
+}
+
 
 .site-avatar {
   float: left;

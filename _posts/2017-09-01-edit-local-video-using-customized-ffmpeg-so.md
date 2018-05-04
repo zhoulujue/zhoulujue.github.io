@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: 利用 FFmpeg 在 Android 上做视频编辑
+title: 编译并裁剪 FFmpeg 在 Android 上做视频编辑
 ---
 
 众所周知，Android 对涉及底层硬件的 API 控制力都比较弱，从其难用的 Camera/Camera2、MediaCodec 等 API 就可见一斑。
