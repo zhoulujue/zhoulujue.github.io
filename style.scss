@@ -19,16 +19,17 @@ html {
 
 body {
   background: $white;
-  font: 17px/1.4 $helvetica;
+  font: 18px/1.4 $helvetica;
   color: $darkGray;
   word-break: hyphenate;
   word-wrap: break-word;
+  line-height: 1.7;
 }
 
 .container {
   margin: 0 auto;
   max-width: 1024px;
-  padding: 0 20px;
+  padding: 0 30px;
   width: 100%;
 }
 
