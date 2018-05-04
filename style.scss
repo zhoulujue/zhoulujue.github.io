@@ -21,12 +21,14 @@ body {
   background: $white;
   font: 17px/1.4 $helvetica;
   color: $darkGray;
+  word-break: hyphenate;
+  word-wrap: break-word;
 }
 
 .container {
   margin: 0 auto;
-  max-width: 740px;
-  padding: 0 10px;
+  max-width: 1024px;
+  padding: 0 20px;
   width: 100%;
 }
 

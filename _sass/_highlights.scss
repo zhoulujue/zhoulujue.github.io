@@ -11,14 +11,15 @@
 
 .highlight pre {
   /* overflow: scroll; Prefer no word wrap? Uncomment this line and comment out the 2 lines below. */
-  word-break: break-all;
-  word-wrap: break-word;
+  overflow: scroll;
+  /*word-break: break-all;*/
+  /*word-wrap: break-word;*/
 }
  
 code {
   font-family: 'Source Code Pro', monospace;
   font-size: 14px;
-  color: #999
+  color: #999;
 }
  
 // Solarized Light Pygments 
