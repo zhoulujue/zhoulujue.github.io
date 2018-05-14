@@ -159,8 +159,11 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 # App Links 实现的另一种方式
 Facebook 在2014年的F8开发者大会上公布了 AppLinks 协议，在Android 的 AppLinks之前(Google I/O 15)，
 也是一种可行的“链接跳转 App”的方式。
-这里也不在赘述细节，可以参考 Facebook 官方的介绍来实现，也特别简单，[Facebook AppLinks](https://developers.facebook.com/docs/applinks)
+这里也不在赘述细节，可以参考 Facebook 官方的介绍来实现，也特别简单。[Facebook AppLinks](https://developers.facebook.com/docs/applinks)
+
+
 ![Facebook Bolts On Android](../images/app_links_bolt.png)
+
 
 # 非自己的代码怎么办
 上面说了很多在网页中唤醒 App 的方式，但是这些都是建立在我们可以改页面 JS 等代码的前提下，
