@@ -22,7 +22,16 @@ code {
   font-size: 14px;
   color: #999;
 }
- 
+
+code.highlighter-rouge {
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 2px 10px;
+  background-color: $lightGray;
+  color: $darkGray;
+  font-size: 16px;
+}
+
 // Solarized Light Pygments 
 // Thanks https://gist.github.com/edwardhotchkiss/2005058
 /* Comment */
