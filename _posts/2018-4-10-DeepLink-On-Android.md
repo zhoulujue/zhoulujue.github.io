@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Android 上玩转 DeepLink : 如何最大程度的向 App 引流
+title: Android 上玩转 DeepLink：如何最大程度的向 App 引流
 ---
 
 如果你的产品向用户提供网页服务，像 Web 页面或者为移动设备设计的 Html5 页面，那么我猜你
@@ -92,8 +92,9 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 上述章节改造，那么系统将唤起 RouterActivity 并将 Intent 传递过去。
 所以问题就来了：**如何选取一个 URL Scheme 使得*浏览器无法响应***，所以你的 scheme
 最好满足以下两个条件：
-     1. 区别于其他应用：唯一性
-     2. 区别于浏览器已经能处理的 scheme：特殊性
+
+1. 区别于其他应用：唯一性
+2. 区别于浏览器已经能处理的 scheme：特殊性
 
 在我们上述假设的新闻 App 里，我们可以定义 scheme 为 `zljnews`，那么在 URL Scheme
 发送的 URL 将会是这样：
