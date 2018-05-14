@@ -97,7 +97,7 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 响应时向系统发送一个 Action 为 `android.intent.action.VIEW`、Data 为
  `tbopen://item.taobao.com/item.htm?id=xxxx` 的 Intent，如果 App 已经按照
 上述章节改造，那么系统将唤起 RouterActivity 并将 Intent 传递过去。
-所以问题就来了：**如何选取一个 URL Scheme 使得*浏览器无法响应\***，所以你的 scheme
+所以问题就来了：**如何选取一个 URL Scheme 使得浏览器无法响应**，所以你的 scheme
 最好满足以下两个条件：
 
 1. 区别于其他应用：唯一性
@@ -157,6 +157,9 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 那么问题来了：用户点击以后，将会发生什么？
 
 答案是：很大的可能是系统弹出一个对话框，列出若干个 App，问你想用哪一个打开。
+
+![选择App列表](../images/15262934775428.jpg)
+
 
 这样体验其实不够好，因为用户路径变长了，**转化率** 将下降。所以我们应该尽可能去掉这个
 对话框，其实上述章节说到了一个方法：将 `http://news.zhoulujue.com/article/123456/`
