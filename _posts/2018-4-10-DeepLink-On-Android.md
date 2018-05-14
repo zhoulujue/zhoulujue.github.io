@@ -11,7 +11,7 @@ title: Android 上玩转 DeepLink：如何最大程度的向 App 引流
 分享链接或者页面的人，如果产生一次点击，你需要尽一切可能把他转化成你的用户。提高点击链接
 的效果，也就提高了产品的 **分享转化率**。
 
-所以本文主要解决的问题其实是**如何在 Android 上尽可能提高 *分享转化率* **。
+所以本文主要解决的问题其实是**如何在 Android 上尽可能提高分享转化率**。
 
 # 基础设施: URL 路由
 
@@ -25,17 +25,21 @@ URL 路由，像阿里巴巴技术团队的[ARouter](https://github.com/alibaba/
 举个例子，一个新闻 App 提供"新闻详情页"、"新闻专题页"、"新闻讨论页" 这个3个功能模块。
 我们先假设我们要处理的 App 的包名为 `com.zhoulujue.news`, 所以这些功能模块的连接
 看起来应该是这样：
+
 ```
 指向id=123456的新闻详情页：http://news.zhoulujue.com/article/123456/
 指向id=123457的新闻专题页：http://news.zhoulujue.com/story/123457/
 指向id=123456的新闻讨论页：http://news.zhoulujue.com/article/123456/comments/
 ```
+
 再假设这些页面的类名分别为：
+
 ```
 新闻详情页：ArticleActivity
 新闻专题页：StoryActivity
 新闻讨论页：CommentsActivity
 ```
+
 所以我们需要一个管理中心，完成两件事情：
 
 1. 将外界传递进来的 URL，分发给各个 Activity 来处理；
@@ -63,6 +67,7 @@ URL 路由，像阿里巴巴技术团队的[ARouter](https://github.com/alibaba/
     </intent-filter>
 </activity>
 ```
+
 上面的声明表示，RouterActivty 可以打开所有域名为news.zhoulujue.com 的 https/http
 链接。
 这个 RouterActivty 在收到 http://news.zhoulujue.com/article/123456/ 后，需要
@@ -70,12 +75,14 @@ URL 路由，像阿里巴巴技术团队的[ARouter](https://github.com/alibaba/
 把`123456`这个 id 作为参数传递给`ArticleActivity`。
 
 常见的 Router 框架通过在 Activity 的类名上添加注解来管理对应关系：
-```
+
+```java
 @Route(path = "/acticel/")
 public class ArticleActivity extend Activity {
     ...
 }
 ```
+
 实际上它在处理这个注解的时候生成了一个建造者模式里的 builder，然后向 **管理中心** 注册，说
 自己(ArticleActivity)能处理`/acticel/xxx`的子域名。
 
@@ -90,7 +97,7 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 响应时向系统发送一个 Action 为 `android.intent.action.VIEW`、Data 为
  `tbopen://item.taobao.com/item.htm?id=xxxx` 的 Intent，如果 App 已经按照
 上述章节改造，那么系统将唤起 RouterActivity 并将 Intent 传递过去。
-所以问题就来了：**如何选取一个 URL Scheme 使得*浏览器无法响应***，所以你的 scheme
+所以问题就来了：**如何选取一个 URL Scheme 使得*浏览器无法响应\***，所以你的 scheme
 最好满足以下两个条件：
 
 1. 区别于其他应用：唯一性
@@ -98,19 +105,24 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 
 在我们上述假设的新闻 App 里，我们可以定义 scheme 为 `zljnews`，那么在 URL Scheme
 发送的 URL 将会是这样：
+
 ```
 指向id=123456的新闻详情页：zljnews://news.zhoulujue.com/article/123456/
 指向id=123457的新闻专题页：zljnews://news.zhoulujue.com/story/123457/
 指向id=123456的新闻讨论页：zljnews://news.zhoulujue.com/article/123456/comments/
 ```
+
 为了避免某些应用会预处理 scheme 和 host，我们还需要将 URL Scheme 的 Host 也做相应
 更改：
+
 ```
 指向id=123456的新闻详情页：zljnews://zljnews/article/123456/
 指向id=123457的新闻专题页：zljnews://zljnews/story/123457/
 指向id=123456的新闻讨论页：zljnews://zljnews/article/123456/comments/
 ```
+
 这样的我们的 Manifest 里 RouterActivity 的声明要改为：
+
 ```xml
 <activity
     android:name=".RouterActivty"
@@ -186,8 +198,7 @@ package 填写 App 包名：`com.zhoulujue.news`，参考[Chrome官方 Intent �
 ![微信微下载](../images/wei_xia_zai.jpeg)
 
 
-如上图，知乎就使用了微下载来向知乎的 App 导流，这种方式 Android iOS 都是通用的，具体实现方式参考腾讯微信官方的
-[文档](http://wiki.open.qq.com/index.php?title=mobile/%E5%BA%94%E7%94%A8%E5%AE%9D%E5%BE%AE%E4%B8%8B%E8%BD%BD)。
+如上图，知乎就使用了微下载来向知乎的 App 导流，这种方式 Android iOS 都是通用的，具体实现方式参考腾讯微信官方的[文档](http://wiki.open.qq.com/index.php?title=mobile/%E5%BA%94%E7%94%A8%E5%AE%9D%E5%BE%AE%E4%B8%8B%E8%BD%BD)。
 
 # 优化1：从网页到 App 的无缝体验
 假设一个场景，用户访问 `http://news.zhoulujue.com` 阅读新闻时，被推荐下载了 App，此时安装完毕后打开 App后，最好
@@ -332,13 +343,16 @@ public static String getUnfinishedURL(Context context) {
     return null;    
 }
 ```
-将`getUnfinishedURL`返回值交给 Router 去处理，从而将用户导向没有阅读完毕的新闻详情页。
+
+接着只要将`getUnfinishedURL`返回值交给 Router 去处理，从而将用户导向没有阅读完毕的新闻详情页。
 
 # 有控制的允许流量的导出
-上面的内容都是在讲如何尽可能地把用户导进 App 里来，从另外一个角度，为了提高用户转化率我们要降低用户的**跳出率**，
-也就是说尽量避免用户从我们的 App 里被带跑了。很多情况下，如果我们运营一个 UGC 的社区，我们无法控制用户创建内容的时候
-会填写哪些 URL，当然作为一个开放的平台我们肯定希望用户能够更高地利用各种工具将他们所专注的任务完成。但是如果平台出现了
-一些人不受限制的发广告，或者利用你的平台运营竞争对手的产品，这种方式对成长中的产品打击有可能将是毁灭性的。
+上面的内容都是在讲如何尽可能地把用户导进 App 里来，从另外一个角度，为了提高用户转化率我们要降低用户的**跳出率**，也就是说尽量避免用户从我们的 App 里被带跑了。
+
+很多情况下，如果我们运营一个 UGC 的社区，我们无法控制用户创建内容的时候会填写哪些 URL，当然作为一个开放的平台我们肯定希望用户能够更高地利用各种工具将他们所专注的任务完成。
+
+但是如果平台出现了一些人不受限制的发广告，或者利用你的平台运营竞争对手的产品，这种方式对成长中的产品打击有可能将是毁灭性的。
+
 最佳实践：在服务器维护一个白名单，这个白名单中被允许的域名将被允许唤醒，否则拦截。
 
 而这个拦截最好的方式是在WebView里，因为大多数跳转代码都在 URL 指向的落地页里。所以我们需要这样定义`WebView`的`WebViewClient`
