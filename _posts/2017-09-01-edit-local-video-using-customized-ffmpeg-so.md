@@ -417,3 +417,4 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
 例如，需要增加对 gif 编辑的支持，只需要添加一个 encoder 和 decoder 就 OK 了。
 
 [1]: https://developer.android.com/reference/android/graphics/Bitmap.html#createBitmap%28android.graphics.Bitmap,%20int,%20int,%20int,%20int%29
+

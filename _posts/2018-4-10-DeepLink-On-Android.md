@@ -22,7 +22,7 @@ URL 路由，像阿里巴巴技术团队的[ARouter](https://github.com/alibaba/
 
 下面我们简单介绍一下基本原理。
 
-举个例子，一个新闻 App 提供"新闻详情页"、"新闻专题页"、"新闻讨论页" 这个3个功能模块。
+举个例子，一个新闻 App 提供 *新闻详情页*、*新闻专题页*、*新闻讨论页* 这个3个功能模块。
 我们先假设我们要处理的 App 的包名为 `com.zhoulujue.news`, 所以这些功能模块的连接
 看起来应该是这样：
 
@@ -51,11 +51,11 @@ URL 路由，像阿里巴巴技术团队的[ARouter](https://github.com/alibaba/
 ```xml
 <activity
     android:name=".RouterActivty"
-    android:theme="@android:style/Theme.Translucent.N
+    android:theme="@android:style/Theme.Translucent.NoTitleBar">
     <intent-filter android:autoVerify="true">
-        <action android:name="android.intent.acti
+        <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BR
+        <category android:name="android.intent.category.BROWSABLE" />
         <data
             android:host="news.zhoulujue.com"
             android:pathPattern="/.*"
@@ -91,13 +91,9 @@ public class ArticleActivity extend Activity {
 和 `android:scheme="http"` , 但是实际上很多 App 还会用特定 `scheme` 的方式来唤起
 App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起。
 
-像淘宝就会用 `tbopen`
-的 scheme，例如 `tbopen://item.taobao.com/item.htm?id=xxxx`，当你在网页点击
-链接以后，页面会创建一个隐藏的 iframe，用它来打开自定义 scheme 的 URL，浏览器无法
-响应时向系统发送一个 Action 为 `android.intent.action.VIEW`、Data 为
- `tbopen://item.taobao.com/item.htm?id=xxxx` 的 Intent，如果 App 已经按照
-上述章节改造，那么系统将唤起 RouterActivity 并将 Intent 传递过去。
-所以问题就来了：**如何选取一个 URL Scheme 使得浏览器无法响应**，所以你的 scheme
+像淘宝就会用 `tbopen`的 scheme，例如 `tbopen://item.taobao.com/item.htm?id=xxxx`，当你在网页点击链接以后，页面会创建一个隐藏的 iframe，用它来打开自定义 scheme 的 URL，浏览器无法响应时，向系统发送一个 Action 为 `android.intent.action.VIEW`、Data 为 `tbopen://item.taobao.com/item.htm?id=xxxx` 的 Intent，如果 App 已经按照上述章节改造，那么系统将唤起 RouterActivity 并将 Intent 传递过去。
+
+所以问题就来了：**如何选取一个 URL Scheme 使得“浏览器无法响应”**，所以你的scheme
 最好满足以下两个条件：
 
 1. 区别于其他应用：唯一性
@@ -126,11 +122,11 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 ```xml
 <activity
     android:name=".RouterActivty"
-    android:theme="@android:style/Theme.Translucent.N
+    android:theme="@android:style/Theme.Translucent.NTitleBar">
     <intent-filter android:autoVerify="true">
-        <action android:name="android.intent.acti
+        <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BR
+        <category android:name="android.intent.category.BROWSABLE" />
         <data
             android:host="news.zhoulujue.com"
             android:pathPattern="/.*"
@@ -141,9 +137,9 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
             android:scheme="https" />
     </int
     <intent-filter>
-        <action android:name="android.intent.acti
+        <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BR
+        <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="zljnews" />
         <data android:host="zljnews" />
         <data android:pathPattern="/.*" />
