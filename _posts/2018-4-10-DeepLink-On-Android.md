@@ -135,7 +135,7 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
             android:host="news.zhoulujue.com"
             android:pathPattern="/.*"
             android:scheme="https" />
-    </int
+    </intent-filter>
     <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
