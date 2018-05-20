@@ -302,7 +302,7 @@ public class WriteApk {
 然后使用下面的命令对 APK 写入 URL：
 
 ```bash
-$java -jar WriteAPK /path/to/your/APK http://news.zhoulujue.com/article/12345/
+$java WriteAPK /path/to/your/APK http://news.zhoulujue.com/article/12345/
 ```
 
 ## 用户首次打开时：读取 URL 并打开
