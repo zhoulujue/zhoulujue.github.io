@@ -4,7 +4,7 @@ title: 在 Android VM 上 使用 Java8-12
 ---
 
 
-#### LDR：“不是所有的Java8 Feature 都会被 D8 desugar”
+#### TLDR：“不是所有的Java8 Feature 都会被 D8 desugar”
 
 ---
 
