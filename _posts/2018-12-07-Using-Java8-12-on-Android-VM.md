@@ -10,9 +10,7 @@ title: 在 Android VM 上 使用 Java8-12
 
 在 `D8` 被引进作为替代 `dx` 的dex工具后，越来越多的人问我是不是可以在项目里用原生lambda来替换Retrolambda，或者问各种新特性在Android上的支持程度。
 
-
-其实如果要正确地回答这个问题，不是能够用一句话说完的。
-所以我整理了一下 Jake Wharton 的Slides，重点如下文便于大家查阅。
+本文主要讨论在Android VM中能否用、以及如何用这些新语言特性。
 
 # Java8
 ### TLDR：真正能Natively用的特性
