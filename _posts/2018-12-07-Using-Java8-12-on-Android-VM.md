@@ -14,7 +14,7 @@ title: 在 Android VM 上 使用 Java8-12
 其实如果要正确地回答这个问题，不是能够用一句话说完的。
 所以我整理了一下 Jake Wharton 的Slides，重点如下文便于大家查阅。
 
-## Java8
+# Java8
 ### TLDR：真正能Natively用的特性
 
 - Api Level 24及以上能用 interface methods (default methods or static methods) 和 Method reference
@@ -50,7 +50,7 @@ em.... 那就用 ThreeTenBP 吧 😄
 
 D8 会在编译后 Desugar 好，同样如果指定 --min-api 24 的话，D8 不会 desugar，使用 native interface methods
 
-## Java9
+# Java9
 
 - Sad fact : Java9 目前还没有被引进 Android SDK.
 - Fun fact : ART 在运行时用 bytecode instructions 支持了某些Java9特性，例如 private interface methods.
@@ -118,7 +118,7 @@ Java9 的 concat 用了 invoke-dynamic 来委托给 `StringConcatFactory` 返回
 
 你只要用了 D8，且 -min-api 21 Java9 特性随便用，至于 Java8 么，呵呵，还要 -min-api 26 才能随便写，what a world!
 
-## Java10
+# Java10
 
 #### TLDR：很多新特性都是在 Java compiler 中实现的，所以和 Runtime 的支持与否无关
 
@@ -142,7 +142,7 @@ public class Main {
 
 同样的，本地变量类型推断仍然是在 java compiler 里做的，所以 Android 里随便用
 
-## Java11
+# Java11
 
 ### Type inference for lambda parameters
 
@@ -242,7 +242,7 @@ NestHost: class Outer
 **很遗憾，ART 不支持这个特性，所以得靠 D8 来 desugar，但是貌似D8没有对class文件中的`NestMembers`和`NestHost`进行支持，所以目前Android中不能用。**
 
 
-## Java12
+# Java12
 
 虽然Java12仍在预览版，不过我们可以通过 EA-build 来了解具体有哪些特性，到写这篇文章时：`expression switch` and `string literals`
 
