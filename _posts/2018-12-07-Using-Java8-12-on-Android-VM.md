@@ -63,7 +63,8 @@ D8 会在编译后 Desugar 好，同样如果指定 --min-api 24 的话，D8 不
 如果你尝试在 Java 中读取一个流，然后关闭一个流，你应该会写很多 try catch
 
 Java9 中可以这样写了：
-```Java
+
+```java
 import java.io.*;
 
 class Java9TryWithResources {
@@ -74,13 +75,14 @@ class Java9TryWithResources {
   }
 }
 ```
+
 **这个特性在 Java compiler 中实现，不需要特殊 VM 指令，所以 Android 里随便用**
 
 ### Anonymous Diamond
 
 钻石语法 Java7 就有了，但是直到 Java9 才有匿名类的钻石语法，像这样：
 
-```Java
+```java
 import java.util.concurrent.*;
 
 class Java9AnonymousDiamond {
@@ -124,7 +126,8 @@ Java9 的 concat 用了 invoke-dynamic 来委托给 `StringConcatFactory` 返回
 
 var: 局部变量的类型推断
 
-```Java
+
+```java
 public class Main {
 
     public static void main(String[] args) {
@@ -145,7 +148,8 @@ public class Main {
 
 对 Java10 的类型推断的一个优化，看如下的代码实例，新旧用法对比：
 
-```Java
+
+```java
 public class Main {
 
     public static void main(String[] args) {
@@ -163,7 +167,7 @@ public class Main {
 
 虽然这个特性看起来不起眼，因为大家平时用lambda的时候都会隐藏类型声明。但是如果是你想加一些 annotation，那就变的很方便：例如，上述代码如果需要在param上加@Nonnull注解，你不需要去翻阅代码去确认 param 的类型，直接把上述方法改为：
 
-```Java
+```java
 public class Main {
 
     public static void main(String[] args) {
@@ -185,7 +189,8 @@ public class Main {
 
 Java11 中Natively支持了嵌套类。
 我们知道在以前在Java中编写嵌套的两个类，编译过后这两个类分别是两个class文件，VM里只是用命名规范来区别这两个类，例如如下Java类：
-```Java
+
+```java
 class Outer {
   private String hello = "hello";
   class Inner {
@@ -195,6 +200,7 @@ class Outer {
   }
 }
 ```
+
 编译后就会变为：
 
 ```shell
@@ -241,7 +247,7 @@ NestHost: class Outer
 虽然Java12仍在预览版，不过我们可以通过 EA-build 来了解具体有哪些特性，到写这篇文章时：`expression switch` and `string literals`
 
 expression switch:
-```Java
+```java
  switch (s) {
       case "hello", "Hello" -> 0;
       case "world" -> 1;
@@ -249,7 +255,7 @@ expression switch:
  }
 ```
 string literals:
-```Java
+```java
 String script = `function hello() {
                     print('"Hello World"');
                  }
