@@ -4,7 +4,9 @@ title: 关于我
 permalink: /about/
 ---
 
-我是 *Michael周*，大家叫我 *Michael*，我是一名程序员，在[下厨房](https://www.xiachufang.com)负责 Android 方面的工作. 
+我是 *Michael周*，大家叫我 *Michael*，我是一名程序员，曾在傲游浏览器、搜狗输入法工作。
+
+目前在[下厨房](https://www.xiachufang.com)负责 Android 和 Flutter 方面的工作. 
 
 这个博客主要用来记录我解决过的技术问题，以及我的生活日常。
 
