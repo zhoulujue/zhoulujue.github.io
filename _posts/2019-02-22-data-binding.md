@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 通过Google”样板间“iosched项目看DataBinding进展
+title: 通过Google“样板间”iosched项目看DataBinding进展
 ---
 
 自从若干年前Databinding被引进后，很多人感觉看到了未来，Android的代码写起来更像前端的代码组合方式了。
