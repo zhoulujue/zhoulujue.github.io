@@ -3,8 +3,6 @@ layout: post
 title: 通过Google”样板间“iosched项目看DataBinding进展
 ---
 
-# Catch up recent updates about DataBinding in iosched
-
 自从若干年前Databinding被引进后，很多人感觉看到了未来，Android的代码写起来更像前端的代码组合方式了。
 
 然而，因为没有类似 webpack 的打包工具，Databinding将Java代码放到xml的做法始终没有Html配合JavaScript那么顺畅。
