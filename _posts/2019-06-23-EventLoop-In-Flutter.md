@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Flutter中InheritedWidget使用的最佳实践
+title: Flutter的Event Loop、Future及Isolate
 ---
 
 本文主要介绍Flutter中Event Loop以及如何在Flutter中做parallel processing.
