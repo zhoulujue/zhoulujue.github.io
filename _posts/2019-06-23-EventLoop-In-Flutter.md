@@ -17,12 +17,12 @@ Flutter中的Dart VM启动后，那么一个新的Thread就会被创建，并且
 
 当这个Thread被创建后，DartVM会自动做以下3件事情：
 * 初始化2个队列，一个叫“MicroTask”，一个叫“Event”，都是FIFO队列
-* 执行 main() 方法，一旦执行完毕就
+* 执行 main() 方法，一旦执行完毕就做下一步
 * 启动 Event Loop
 
 Event Loop就像一个 infinite loop，被内部时钟来调谐，每一个tick，如果没有其他Dart Code在执行，就会做如下的事情（伪代码）：
 
-```Dart
+```dart
 void eventLoop(){
     while (microTaskQueue.isNotEmpty){
         fetchFirstMicroTaskFromQueue();
@@ -39,8 +39,10 @@ void eventLoop(){
 
 ### MicroTask Queue
 MicroTask Queue是为了非常短暂的asynchronously的内部操作来设计的。在其他Dart代码运行完毕后，且在移交给Event Queue前。
+
 举个例子，我们经常需要在close一个resource以后，dispose掉一些handle，下面的这个例子里，scheduleMicroTask 可以用来做 dispose 的事情：
-```Dart
+
+```dart
     MyResource myResource;
 
     ...
@@ -89,7 +91,8 @@ Event Queue 主要用来处理当某些事件发生后，调用哪些操作，�
 
 Future和其他Event一样，会在EventQueue里被执行。
 以下的例子用来说明Future和上面的Event执行过程一样
-```Dart
+
+```dart
 void main(){
     print('Before the Future');
     Future((){
@@ -100,13 +103,16 @@ void main(){
     print('After the Future');
 }
 ```
+
 执行后，会得到如下输出：
+
 ```Shell
 Before the Future
 After the Future
 Running the Future
 Future is complete
 ```
+
 我们来分步骤解释一下代码是如何执行的：
 1. 执行print(‘Before the Future’)
 2. 将function “(){print(‘Running the Future’);}” 添加到 event queue
@@ -128,14 +134,14 @@ Future is complete
 每个Isolate都有自己的Data，和Event loop
 Isolate之间通过消息来进行沟通
 
-```Dart
+```dart
 Isolate.spawn(
   aFunctionToRun,
   {'data' : 'Here is some data.'}, 
 );
 ```
 
-```Dart
+```dart
 compute(
   (paramas) {
     /* do something */
@@ -149,7 +155,8 @@ compute(
 * 当你创建一个Isolate时，就需要给 `spawn` 方法传递一个 `ReceivePort` 的实例，后续会用这个port来收/发消息，同时也会通过这个port把本地 Isolate的sendport返回
 
 找了一个例子，感受一下
-```Dart
+
+```dart
 //
 // The port of the new isolate
 // this port will be used to further
@@ -209,11 +216,12 @@ static void callbackFunction(SendPort callerSendPort){
     //
 }
 ```
+
 两个 Isolate 都有了各自的port，那么它们就可以开始互发消息了:
 
 本地Isolate向新Isolate发消息并回收结果：
 
-```Dart
+```dart
 Future<String> sendReceive(String messageToBeSent) async {
     //
     // We create a temporary port to receive the answer
@@ -241,7 +249,7 @@ Future<String> sendReceive(String messageToBeSent) async {
 
 本地Isolate被动收消息，还记得上面的`spawn`方法吗，第一个参数是 `callbackFunction`这个方法就是用来收结果的：
 
-```Dart
+```dart
 //
 // Extension of the callback function to process incoming messages
 //
@@ -292,7 +300,8 @@ class CrossIsolatesMessage<T> {
 
 #### Isolate 的销毁
 如果创建的Isolate不再使用，那么最好是能将其release掉：
-```Dart
+
+```dart
 void dispose(){
     newIsolate?.kill(priority: Isolate.immediate);
     newIsolate = null;
