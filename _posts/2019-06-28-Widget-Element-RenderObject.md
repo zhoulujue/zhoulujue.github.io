@@ -62,7 +62,7 @@ void paint(PaintingContext context, Offset offset) {
     }
   }
 ```
-这里的`PaintingContext`实际上是个Canvas，所以最重要的代码就是`context.pushOpacity`这个方法的调用，最终用上了 `_alpha`，而这个`_alpha`由最上层`Opacity`空间的唯一参数`opacity`计算而来。
+这里的`PaintingContext`实际上是个Canvas，所以最重要的代码就是`context.pushOpacity`这个方法的调用，最终用上了 `_alpha`，而这个`_alpha`由最上层`Opacity`Widget的唯一参数`opacity`计算而来。
 
 所以我们来总结一下这里面的关系：
 
@@ -88,7 +88,7 @@ void paint(PaintingContext context, Offset offset) {
 
 让程序员不去保存Widgets是好的，因为他不会因为管理无数的Widget而且烦恼，一旦有变化就当整个页面都在变化，Widget的每一帧对应了一个State。这样，一个指定的state就能精确描述一个Widget该怎么展示。也就是说，程序员只要管理好状态，那么就能管理好整个页面变化的逻辑。
 
-当一个Widget首次被创建的时候，那么这个Widget会过`Widget.createElement`inflate成一个`element`，挂在 element tree 上。
+当一个Widget首次被创建的时候，那么这个Widget会过`Widget.createElement` inflate成一个`element`，挂在 element tree 上。
 
 此后，当State发生变化，则Widget重建，但Element只会updates。
 
@@ -96,11 +96,19 @@ void paint(PaintingContext context, Offset offset) {
 
 程序员写Widget -> Widget形成Element -> Element构建 RenderObject -> RenderObject描述Canvas绘制 -> 交给FlutterEngine 光栅化**Rasterize**
 
-回到我们今天的主角`Opacity`，从上面的分析，我么知道Opacity也是Widget，所以理应有对应的Element，但是上面看到为啥直接Widget就自己返回一个`RenderOpacity`呢？看起来是Widget自己创建了RenderObject。那么它的element是什么时候创建的呢？看源码：
+回到我们今天的主角`Opacity`，从上面的分析，我们知道Opacity也是Widget，所以理应有对应的Element，但是上面看到为啥直接Widget就自己返回一个`RenderOpacity`呢？看起来是Widget自己创建了RenderObject。那么它的element是什么时候创建的呢？看源码：
 
 ```dart
+abstract class SingleChildRenderObjectWidget extends RenderObjectWidget { 
+
+...
+
 @override
 SingleChildRenderObjectElement createElement() => new SingleChildRenderObjectElement(this);
+
+...
+
+}
 ```
 Opacity继承自`SingleChildRenderObjectWidget`，
 这里面的`SingleChildRenderObjectElement`，实际上是只有一个child的Element。当第Widget第一次创建的时候，`createElement`会被调用，返回一个`SingleChildRenderObjectElement`
@@ -108,7 +116,12 @@ Opacity继承自`SingleChildRenderObjectWidget`，
 那它的 RenderObject 实际上是被这个 Element 创建的，看一下为什么：
 
 ```dart
-SingleChildRenderObjectElement(SingleChildRenderObjectWidget widget) : super(widget);
+class SingleChildRenderObjectElement extends RenderObjectElement {
+
+    SingleChildRenderObjectElement(SingleChildRenderObjectWidget widget) : super(widget);
+
+    ...
+}
 ```
 
 这个`SingleChildRenderObjectElement`构造函数接受了一个`SingleChildRenderObjectWidget`参数，它负责创建一个`RenderObject`。那么我们看这个 renderobject 实际在哪里创建的：
@@ -129,6 +142,9 @@ class SingleChildRenderObjectElement {
 SingleChildRenderObjectElement里有个mount方法，看起来没啥，不过没事儿我们往父类里看：
 
 ```dart
+class RenderObjectElement extends Element {
+
+...
 
 @override
   void mount(Element parent, dynamic newSlot) {
@@ -139,6 +155,8 @@ SingleChildRenderObjectElement里有个mount方法，看起来没啥，不过没
     attachRenderObject(newSlot);
     _dirty = false;
   }
+
+  ...
 ```
 终于看到magic了，所以在`mount`方法里，element调用了`widget.createRenderObject`，并attach。
 
