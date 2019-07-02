@@ -3,7 +3,7 @@ layout: post
 title: 去 Google 参加 Rising Star Meetup
 ---
 
-![Try finding me in the photo](../images//15270916993684.jpg)
+![Try finding me in the photo](https://i.loli.net/2019/07/02/5d1b082ba07f347014.jpg)
 
 
 17号收到谷歌 Maya 同学的邮件邀请去参加会议，我全然忘了什么时候被推荐去参加 Google 的组织的 Rising Star 线下聚会。其主要目的是将一些创业公司召集起来，鼓励大家做出海应用、同步 I/O 上的技术、产品等等。相当于是一个谷歌与创业公司的一个双向沟通。
