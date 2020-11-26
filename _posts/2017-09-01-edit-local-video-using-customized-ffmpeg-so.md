@@ -22,7 +22,7 @@ title: 编译并裁剪 FFmpeg 在 Android 上做视频编辑
 
 首先，按照 Android 官方的文档推荐，当然首推 MediaCodec。
 
-![MediaCodec 编解码](https://upload-images.jianshu.io/upload_images/692819-9a4391530a263a32.png?imageMogr2/auto-orient/strip|imageView2/2/w/1144/format/webp)
+![MediaCodec 编解码](http://upload-images.jianshu.io/upload_images/96392-f415db21dfd3a808.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 1. **MediaCodec 尺寸裁减**
 
@@ -129,7 +129,7 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     make STRIP= -j4 install || exit 1
     ```
 
-    ![x264编译脚本](https://upload-images.jianshu.io/upload_images/96392-10f483096db54135.png?imageMogr2/auto-orient/strip|imageView2/2/w/782/format/webp)
+    ![x264编译脚本](http://upload-images.jianshu.io/upload_images/96392-10f483096db54135.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 3. 找到x264 repo 的根目录下的 configure 文件，找到 `echo "SONAME=libx264.so.$API" >> config.mak` 改为 `echo "SONAME=libx264-$API.so" >> config.mak`
@@ -205,7 +205,7 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     say "Your building has been completed!"
     ```
 
-    ![FFmpeg shared lib 编译脚本](https://upload-images.jianshu.io/upload_images/96392-437dec338d700f60.png?imageMogr2/auto-orient/strip|imageView2/2/w/639/format/webp)
+    ![FFmpeg shared lib 编译脚本](http://upload-images.jianshu.io/upload_images/96392-437dec338d700f60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 7. 执行编译脚本，编译结果会在 /Users/xxx/ffmpegbuilddir/ffmpeg-install-dir/arm/ 目录下
 
@@ -318,21 +318,21 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     include $(BUILD_SHARED_LIBRARY)
     ```
 
-    ![Jni 目录结构](https://upload-images.jianshu.io/upload_images/96392-717ab98dd9b6424c.png?imageMogr2/auto-orient/strip|imageView2/2/w/360/format/webp)
+    ![Jni 目录结构](http://upload-images.jianshu.io/upload_images/96392-717ab98dd9b6424c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 3. 编写 java 代码，声明 Java native method
 
-    ![Java 代码](https://upload-images.jianshu.io/upload_images/96392-eb8a7d39afa89c9f.png?imageMogr2/auto-orient/strip|imageView2/2/w/492/format/webp)
+    ![Java 代码](http://upload-images.jianshu.io/upload_images/96392-eb8a7d39afa89c9f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 修改 ffmpeg.c 文件，绑定 jni 方法名与 ffmpeg.c 的方法名
 
-    ![绑定方法名称](https://upload-images.jianshu.io/upload_images/96392-67191c48eb8a3b08.png?imageMogr2/auto-orient/strip|imageView2/2/w/738/format/webp)
+    ![绑定方法名称](http://upload-images.jianshu.io/upload_images/96392-67191c48eb8a3b08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 在 jni 目录下执行 `ndk-build APP_ABI=armeabi`
 
 
-    ![编译 libffmpegjni.so ](https://upload-images.jianshu.io/upload_images/96392-1f1b2ba94605bc06.png?imageMogr2/auto-orient/strip|imageView2/2/w/1105/format/webp)
+    ![编译 libffmpegjni.so ](http://upload-images.jianshu.io/upload_images/96392-1f1b2ba94605bc06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 4. 在 libs/armeabi 目录下得到 libffmpegjni.so
@@ -399,11 +399,11 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
 
 3. 重新执行 `ndk-build APP_ABI=armeabi` ，将在 `libs/armeabi` 下得到 lib ffmpeg_mediametadataretriever_jni.so
 
-    ![ffmpeg_mediametadataretriever_jni 编译结果](https://upload-images.jianshu.io/upload_images/96392-23be348a1fd652c8.png?imageMogr2/auto-orient/strip|imageView2/2/w/325/format/webp)
+    ![ffmpeg_mediametadataretriever_jni 编译结果](http://upload-images.jianshu.io/upload_images/96392-23be348a1fd652c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 4. 将 FFmpegMediaMetadataRetriever repo 中 的 Java 类`FFmpegMediaMetadataRetriever.java`拷贝到你的项目中，注意要改一下 so load 的过程：
 
-    ![修改 FFmpegMediaMetadataRetriever.java ](https://upload-images.jianshu.io/upload_images/96392-50199822650ec0f7.png?imageMogr2/auto-orient/strip|imageView2/2/w/509/format/webp)
+    ![修改 FFmpegMediaMetadataRetriever.java ](http://upload-images.jianshu.io/upload_images/96392-50199822650ec0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 5. 到这里，你已经或得了可以运行的 FFmpegMediaMetadataRetriever，并且复用了用于视频编辑模块的 ffmpeg
 
