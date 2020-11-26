@@ -22,7 +22,7 @@ title: 编译并裁剪 FFmpeg 在 Android 上做视频编辑
 
 首先，按照 Android 官方的文档推荐，当然首推 MediaCodec。
 
-![MediaCodec 编解码](http://upload-images.jianshu.io/upload_images/96392-f415db21dfd3a808.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![MediaCodec 编解码](https://upload-images.jianshu.io/upload_images/96392-f415db21dfd3a808.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 1. **MediaCodec 尺寸裁减**
 
