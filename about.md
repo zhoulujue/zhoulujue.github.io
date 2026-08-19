@@ -16,7 +16,7 @@ permalink: /about/
 
 如果你需要转载我的文章，**请务必事先联系微信号**: *michaelzhoujay*
 
-![微信二维码](../images/Wechat_qrcode.jpeg)
+![微信二维码]({{ site.baseurl }}/images/Wechat_qrcode.jpeg)
 	
 每个页面的底部 Footer 都有我的各个社交账号的链接，可以通过这些方式联系我。
 

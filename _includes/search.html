@@ -1,0 +1,113 @@
+<div id="search-modal" class="search-modal" style="display: none;">
+  <div class="search-modal-backdrop" id="search-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="search-input" placeholder="搜索文章标题、关键词..." autocomplete="off" />
+      <button type="button" id="search-close" aria-label="Close search">&times;</button>
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var searchModal = document.getElementById('search-modal');
+  var searchToggle = document.getElementById('search-toggle');
+  var searchClose = document.getElementById('search-close');
+  var searchBackdrop = document.getElementById('search-backdrop');
+  var searchInput = document.getElementById('search-input');
+  var searchResults = document.getElementById('search-results');
+  var searchData = null;
+
+  function loadSearchData() {
+    if (searchData) return Promise.resolve(searchData);
+    return fetch('{{ site.baseurl }}/search.json')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        searchData = data;
+        return data;
+      }).catch(function(err) {
+        console.error('Failed to load search.json: ', err);
+        return [];
+      });
+  }
+
+  function openSearch(e) {
+    if (e) e.preventDefault();
+    searchModal.style.display = 'flex';
+    loadSearchData();
+    setTimeout(function() { searchInput.focus(); }, 100);
+  }
+
+  function closeSearch() {
+    searchModal.style.display = 'none';
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+  }
+
+  if (searchToggle) {
+    searchToggle.addEventListener('click', openSearch);
+  }
+
+  if (searchClose) searchClose.addEventListener('click', closeSearch);
+  if (searchBackdrop) searchBackdrop.addEventListener('click', closeSearch);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && searchModal.style.display === 'flex') {
+      closeSearch();
+    }
+    // Shortcut Ctrl+K or Cmd+K
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (searchModal.style.display === 'flex') {
+        closeSearch();
+      } else {
+        openSearch();
+      }
+    }
+  });
+
+  searchInput.addEventListener('input', function() {
+    var query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    loadSearchData().then(function(posts) {
+      var matches = posts.filter(function(post) {
+        return (post.title && post.title.toLowerCase().indexOf(query) !== -1) ||
+               (post.content && post.content.toLowerCase().indexOf(query) !== -1);
+      });
+
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div class="search-empty">未找到相关文章</div>';
+        return;
+      }
+
+      var html = '<ul class="search-results-list">';
+      matches.slice(0, 10).forEach(function(post) {
+        html += '<li class="search-item">' +
+                '<a href="' + post.url + '">' +
+                '<div class="search-item-title">' + highlight(post.title, query) + '</div>' +
+                '<div class="search-item-date">' + post.date + '</div>' +
+                '<div class="search-item-snippet">' + highlight(post.content, query) + '</div>' +
+                '</a></li>';
+      });
+      html += '</ul>';
+      searchResults.innerHTML = html;
+    });
+  });
+
+  function highlight(text, query) {
+    if (!text) return '';
+    var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var regex = new RegExp('(' + escaped + ')', 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  }
+})();
+</script>

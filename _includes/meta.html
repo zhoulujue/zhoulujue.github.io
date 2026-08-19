@@ -1,18 +1,29 @@
     <meta charset="utf-8" />
-    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     {% if page.excerpt %}
-    <meta name="description" content="{{ page.excerpt| strip_html }}" />
-    <meta property="og:description" content="{{ page.excerpt| strip_html }}" />
+    <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}" />
+    <meta property="og:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}" />
+    <meta name="twitter:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}" />
     {% else %}
-    <meta name="description" content="{{ site.description }}">
+    <meta name="description" content="{{ site.description }}" />
     <meta property="og:description" content="{{ site.description }}" />
+    <meta name="twitter:description" content="{{ site.description }}" />
     {% endif %}
     <meta name="author" content="{{ site.name }}" />
 
-    {% if page.title %}
-    <meta property="og:title" content="{{ page.title }}" />
-    <meta property="twitter:title" content="{{ page.title }}" />
+    <link rel="canonical" href="{{ site.url }}{{ page.url | replace:'index.html','' }}" />
+
+    <meta property="og:site_name" content="{{ site.name }}" />
+    <meta property="og:type" content="{% if page.title %}article{% else %}website{% endif %}" />
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
+    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}" />
+    <meta property="og:image" content="{% if page.image %}{{ page.image }}{% else %}{{ site.url }}{{ site.avatar }}{% endif %}" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}" />
+    {% if site.footer-links.twitter %}
+    <meta name="twitter:site" content="@{{ site.footer-links.twitter }}" />
+    <meta name="twitter:creator" content="@{{ site.footer-links.twitter }}" />
     {% endif %}
