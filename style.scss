@@ -271,6 +271,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
 
   @include mobile {
     flex-direction: column;
@@ -283,6 +284,8 @@ img {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
+  flex: 1 1 auto;
 
   @include mobile {
     flex-direction: column;
@@ -308,6 +311,7 @@ img {
 .site-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .site-name {
@@ -317,6 +321,7 @@ img {
   font-weight: 600;
   font-size: 24px;
   letter-spacing: -0.5px;
+  white-space: nowrap;
 
   a {
     color: inherit;
@@ -331,6 +336,7 @@ img {
   margin: 2px 0 0 0;
   color: var(--muted-text);
   font-size: 14px;
+  line-height: 1.4;
 }
 
 nav {
@@ -338,12 +344,22 @@ nav {
   align-items: center;
   gap: 16px;
   font-size: 16px;
+  flex-shrink: 0;
+  white-space: nowrap;
+
+  @include mobile {
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 
   a {
     color: var(--muted-text);
     font-weight: 500;
     text-decoration: none;
     transition: color 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:hover {
       color: var(--link-color);
@@ -355,14 +371,19 @@ nav {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
+    padding: 5px 10px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    cursor: pointer;
+    line-height: 1;
 
     .search-btn-icon {
       color: var(--muted-text);
+      flex-shrink: 0;
     }
 
     .search-kbd-shortcut {
@@ -373,6 +394,7 @@ nav {
       background: var(--border-color);
       color: var(--muted-text);
       line-height: 1.2;
+      flex-shrink: 0;
     }
 
     &:hover {
@@ -391,12 +413,15 @@ nav {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 5px 8px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   color: var(--muted-text);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 
   &:hover {
@@ -406,29 +431,31 @@ nav {
 
   .sun-icon {
     display: block;
+    flex-shrink: 0;
   }
 
   .moon-icon {
     display: none;
+    flex-shrink: 0;
   }
 }
 
 [data-theme="dark"] .theme-toggle-btn {
   .sun-icon {
-    display: none;
+    display: none !important;
   }
   .moon-icon {
-    display: block;
+    display: block !important;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .theme-toggle-btn {
     .sun-icon {
-      display: none;
+      display: none !important;
     }
     .moon-icon {
-      display: block;
+      display: block !important;
     }
   }
 }
