@@ -22,7 +22,7 @@ title: 编译并裁剪 FFmpeg 在 Android 上做视频编辑
 
 首先，按照 Android 官方的文档推荐，当然首推 MediaCodec。
 
-![MediaCodec 编解码](../images/ffmpeg1.png)
+![MediaCodec 编解码]({{ site.baseurl }}/images/ffmpeg1.png)
 
 1. **MediaCodec 尺寸裁减**
 
@@ -129,7 +129,7 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     make STRIP= -j4 install || exit 1
     ```
 
-    ![x264编译脚本](../images/ffmpeg2.png)
+    ![x264编译脚本]({{ site.baseurl }}/images/ffmpeg2.png)
 
 
 3. 找到x264 repo 的根目录下的 configure 文件，找到 `echo "SONAME=libx264.so.$API" >> config.mak` 改为 `echo "SONAME=libx264-$API.so" >> config.mak`
@@ -205,7 +205,7 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     say "Your building has been completed!"
     ```
 
-    ![FFmpeg shared lib 编译脚本](../images/ffmpeg3.png)
+    ![FFmpeg shared lib 编译脚本]({{ site.baseurl }}/images/ffmpeg3.png)
 
 7. 执行编译脚本，编译结果会在 /Users/xxx/ffmpegbuilddir/ffmpeg-install-dir/arm/ 目录下
 
@@ -318,21 +318,21 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
     include $(BUILD_SHARED_LIBRARY)
     ```
 
-    ![Jni 目录结构](../images/ffmpeg3.png)
+    ![Jni 目录结构]({{ site.baseurl }}/images/ffmpeg3.png)
 
 
 3. 编写 java 代码，声明 Java native method
 
-    ![Java 代码](../images/ffmpeg4.png)
+    ![Java 代码]({{ site.baseurl }}/images/ffmpeg4.png)
 
 3. 修改 ffmpeg.c 文件，绑定 jni 方法名与 ffmpeg.c 的方法名
 
-    ![绑定方法名称](../images/ffmpeg5.png)
+    ![绑定方法名称]({{ site.baseurl }}/images/ffmpeg5.png)
 
 3. 在 jni 目录下执行 `ndk-build APP_ABI=armeabi`
 
 
-    ![编译 libffmpegjni.so ](../images/ffmpeg6.png)
+    ![编译 libffmpegjni.so ]({{ site.baseurl }}/images/ffmpeg6.png)
 
 
 4. 在 libs/armeabi 目录下得到 libffmpegjni.so
@@ -399,11 +399,11 @@ ffmpeg-android-java 的原理很简单，交叉编译好可执行的 ffmpeg 二�
 
 3. 重新执行 `ndk-build APP_ABI=armeabi` ，将在 `libs/armeabi` 下得到 lib ffmpeg_mediametadataretriever_jni.so
 
-    ![ffmpeg_mediametadataretriever_jni 编译结果](../images/ffmpeg7.png)
+    ![ffmpeg_mediametadataretriever_jni 编译结果]({{ site.baseurl }}/images/ffmpeg7.png)
 
 4. 将 FFmpegMediaMetadataRetriever repo 中 的 Java 类`FFmpegMediaMetadataRetriever.java`拷贝到你的项目中，注意要改一下 so load 的过程：
 
-    ![修改 FFmpegMediaMetadataRetriever.java ](../images/ffmpeg8.png)
+    ![修改 FFmpegMediaMetadataRetriever.java ]({{ site.baseurl }}/images/ffmpeg8.png)
 
 5. 到这里，你已经或得了可以运行的 FFmpegMediaMetadataRetriever，并且复用了用于视频编辑模块的 ffmpeg
 

@@ -30,7 +30,7 @@ resource所以，以前经常出现的情况时，在XML里写了个错误的 pr
 
 由于XML 的 namespace 没有严格区分，所以很难一眼看出哪个是 bind adapter 提供的 attribute 哪个不是所以使用时，一定要区分清楚，bind adapter 不要忘了 @{ }
 
-![3698172989fb3f94f89e9a1a20272e1a](../images/3E735FF2-1B1E-4AA8-A668-AF5D8C1F78A0.png)
+![3698172989fb3f94f89e9a1a20272e1a]({{ site.baseurl }}/images/3E735FF2-1B1E-4AA8-A668-AF5D8C1F78A0.png)
 
 ---
 
@@ -38,7 +38,7 @@ resource所以，以前经常出现的情况时，在XML里写了个错误的 pr
 
 目前IDE及插件不能解决，写起来不太优雅只能通过代码规范来约束
 
-![8019f77473838855e3a8438e1c4f714f](../images/AA220FE0-44D4-4BEC-B2F8-62AAC7FF9B35.png)
+![8019f77473838855e3a8438e1c4f714f]({{ site.baseurl }}/images/AA220FE0-44D4-4BEC-B2F8-62AAC7FF9B35.png)
 
 ---
 
@@ -46,7 +46,7 @@ resource所以，以前经常出现的情况时，在XML里写了个错误的 pr
 
 1. 漏写 @{}，aapt2 不会将这个 expression 识别为一个编译错误，只有当运行起来后才会报错，极有可能延迟错误的发生到 runtime。IDE对 binding expression 的支持是一个 limited support，也就是说不会有代码提示，错误提示等等，增加了犯错的几率。
 
-![87760e92e1b85ad667205e77670c9f96](../images/CF5F6F1C-DDB6-4C4E-B4D1-CAC2DAAAC9F3.png)
+![87760e92e1b85ad667205e77670c9f96]({{ site.baseurl }}/images/CF5F6F1C-DDB6-4C4E-B4D1-CAC2DAAAC9F3.png)
 
 Bindging expression 还有一个不算缺点的缺点：被限制只能写简单的逻辑。
 
@@ -58,7 +58,7 @@ Bindging expression 还有一个不算缺点的缺点：被限制只能写简单
 
 其实可以等效改为 typed EventBus 来解决，避免冗余的范型展开以及LiveData的状态管理
 
-![96eba6d3ad6b4842a4c87ee1861c50d3](../images/65741E63-FB7A-4C80-A301-6D1D08DF6C89.png)
+![96eba6d3ad6b4842a4c87ee1861c50d3]({{ site.baseurl }}/images/65741E63-FB7A-4C80-A301-6D1D08DF6C89.png)
 
 被限制只能写简单的逻辑，出发点是好的，但是随着业务的复杂化，attribute 的 value 很有可能不是简单的从 ViewModel 的 property/getter 获得，而是拥有了一些逻辑。
 
@@ -68,6 +68,6 @@ Bindging expression 还有一个不算缺点的缺点：被限制只能写简单
 
 读代码时带来的困扰，无法F3和Find Usages：在XML里没有形成依赖，只能通过字符串查找。目前没有办法解决命名冲突：BindingAdapter的名称要用指定好的前缀来避免命名冲突
 
-![1e26e750273a8c7e441c927dfbdf1145](../images/0CCCF47C-7A80-4AC7-8768-C0CB5CC2281C.png)
+![1e26e750273a8c7e441c927dfbdf1145]({{ site.baseurl }}/images/0CCCF47C-7A80-4AC7-8768-C0CB5CC2281C.png)
 
 如果你的XML描述的 View 自治性很好，对外界的依赖很小，那么这种写法其实很好，因为xml中 <data> 对你的单依赖能很好的在 ViewModel 中内消化掉。但是如果你的XML描述的 View 对外界的依赖较高，要么添加更多 <data> 依赖，要么使用复杂的 binding adapter。违背了 DataBinding设计的初衷，所以请将你的XML描述的View的自治性设计的尽量好一些。

@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (theme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
     <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
 
     {% include meta.html %}
@@ -10,6 +20,8 @@
   </head>
 
   <body>
+    <div id="reading-progress-bar" class="reading-progress-bar"></div>
+
     <div class="wrapper-masthead">
       <div class="container">
         <header class="masthead clearfix">
@@ -25,7 +37,15 @@
           <nav>
             <a href="{{ site.baseurl }}/">Blog</a>
             <a href="{{ site.baseurl }}/about">About</a>
-            <a href="#search" id="search-toggle" class="search-nav-btn">Search</a>
+            <a href="#search" id="search-toggle" class="search-nav-btn" aria-label="全站搜索 (快捷键 ⌘K)">
+              <svg class="search-btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Search</span>
+              <kbd class="search-kbd-shortcut">⌘K</kbd>
+            </a>
+            {% include theme-toggle.html %}
           </nav>
         </header>
       </div>
@@ -43,8 +63,15 @@
       </div>
     </div>
 
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+
     {% include analytics.html %}
     {% include code-copy.html %}
     {% include search.html %}
+    {% include scroll-features.html %}
   </body>
 </html>

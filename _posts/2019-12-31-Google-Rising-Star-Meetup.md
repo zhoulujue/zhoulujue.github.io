@@ -3,15 +3,15 @@ layout: post
 title: 去 Google 参加 Rising Star Meetup
 ---
 
-![Try finding me in the photo](https://i.loli.net/2019/07/02/5d1b082ba07f347014.jpg)
+![Try finding me in the photo]({{ site.baseurl }}/images/google-meetup-group.jpg)
 
 
 17号收到谷歌 Maya 同学的邮件邀请去参加会议，我全然忘了什么时候被推荐去参加 Google 的组织的 Rising Star 线下聚会。其主要目的是将一些创业公司召集起来，鼓励大家做出海应用、同步 I/O 上的技术、产品等等。相当于是一个谷歌与创业公司的一个双向沟通。
 
 下午12:30出发，目的地在一个名为“融科资讯中心”的大厦里，进去后感觉很高大上，电梯间也有很明显的 Google 风格的一些装饰，突然感觉是曾相识，我才想起来以前在搜狗上班的时候，同方大厦的那几层也是这样的装修风格。也不知道是谁抄袭谁哈~
 
-![Guide](/images/15270918175606.jpg)
-![Agenda](/images/15270918353294.jpg)
+![Guide]({{ site.baseurl }}/images/15270918175606.jpg)
+![Agenda]({{ site.baseurl }}/images/15270918353294.jpg)
 
 
 ---
@@ -32,6 +32,6 @@ title: 去 Google 参加 Rising Star Meetup
 第一次有了，Google 的中国员工“不过如此，我也可以”的想法，不知道是好是坏哈哈哈。
 
 
-![](/images/15270918735953.jpg)
+![]({{ site.baseurl }}/images/15270918735953.jpg)
 
 

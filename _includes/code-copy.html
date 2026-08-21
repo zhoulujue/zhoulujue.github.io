@@ -2,16 +2,51 @@
   document.addEventListener('DOMContentLoaded', function () {
     var codeBlocks = document.querySelectorAll('div.highlight');
     codeBlocks.forEach(function (block) {
+      // Extract language badge
+      var pre = block.querySelector('pre');
+      var code = block.querySelector('code');
+      var lang = '';
+
+      if (code) {
+        var classNames = code.className.split(' ');
+        for (var i = 0; i < classNames.length; i++) {
+          var cls = classNames[i];
+          if (cls.indexOf('language-') === 0) {
+            lang = cls.replace('language-', '');
+            break;
+          }
+        }
+      }
+      if (!lang && block.className) {
+        var match = block.className.match(/language-(\w+)/);
+        if (match) lang = match[1];
+      }
+
+      if (lang && lang !== 'plaintext') {
+        var langBadge = document.createElement('span');
+        langBadge.className = 'highlight-lang';
+        langBadge.innerText = lang.toUpperCase();
+        block.appendChild(langBadge);
+      }
+
+      // Add Copy Button
       var button = document.createElement('button');
       button.className = 'copy-code-button';
       button.type = 'button';
-      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.setAttribute('aria-label', '复制代码到剪贴板');
       button.innerText = 'Copy';
 
       button.addEventListener('click', function () {
-        var code = block.querySelector('code');
-        var text = code ? code.innerText : block.innerText;
-        navigator.clipboard.writeText(text).then(function () {
+        var textToCopy = '';
+        if (code) {
+          textToCopy = code.innerText;
+        } else if (pre) {
+          textToCopy = pre.innerText;
+        } else {
+          textToCopy = block.innerText;
+        }
+
+        navigator.clipboard.writeText(textToCopy).then(function () {
           button.innerText = 'Copied!';
           button.classList.add('copied');
           setTimeout(function () {

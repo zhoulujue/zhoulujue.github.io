@@ -2,6 +2,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Theme Color for modern browsers -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+
+    <!-- Favicons & Icons -->
+    <link rel="shortcut icon" href="{{ site.baseurl }}/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ site.baseurl }}/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ site.baseurl }}/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ site.baseurl }}/apple-touch-icon.png" />
+    <link rel="manifest" href="{{ site.baseurl }}/site.webmanifest" />
+    <link rel="mask-icon" href="{{ site.baseurl }}/safari-pinned-tab.svg" color="#1877f2" />
+    <meta name="msapplication-config" content="{{ site.baseurl }}/browserconfig.xml" />
+    <meta name="msapplication-TileColor" content="#1877f2" />
+
+    <!-- SEO Meta Tags -->
     {% if page.excerpt %}
     <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}" />
     <meta property="og:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}" />
@@ -15,15 +30,63 @@
 
     <link rel="canonical" href="{{ site.url }}{{ page.url | replace:'index.html','' }}" />
 
+    <!-- Open Graph Tags -->
     <meta property="og:site_name" content="{{ site.name }}" />
-    <meta property="og:type" content="{% if page.title %}article{% else %}website{% endif %}" />
+    <meta property="og:type" content="{% if page.date %}article{% else %}website{% endif %}" />
     <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
     <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}" />
     <meta property="og:image" content="{% if page.image %}{{ page.image }}{% else %}{{ site.url }}{{ site.avatar }}{% endif %}" />
+    {% if page.date %}
+    <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+    <meta property="article:author" content="{{ site.name }}" />
+    {% endif %}
 
+    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}" />
+    <meta name="twitter:image" content="{% if page.image %}{{ page.image }}{% else %}{{ site.url }}{{ site.avatar }}{% endif %}" />
     {% if site.footer-links.twitter %}
     <meta name="twitter:site" content="@{{ site.footer-links.twitter }}" />
     <meta name="twitter:creator" content="@{{ site.footer-links.twitter }}" />
     {% endif %}
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {% if page.date %}
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": {{ page.title | jsonify }},
+      "description": {% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 | jsonify }}{% else %}{{ site.description | jsonify }}{% endif %},
+      "url": {{ site.url | append: page.url | jsonify }},
+      "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+      "dateModified": {% if page.last_modified_at %}{{ page.last_modified_at | date_to_xmlschema | jsonify }}{% else %}{{ page.date | date_to_xmlschema | jsonify }}{% endif %},
+      "author": {
+        "@type": "Person",
+        "name": {{ site.name | jsonify }},
+        "url": {{ site.url | jsonify }}
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": {{ site.name | jsonify }}
+      },
+      "image": {% if page.image %}{{ page.image | jsonify }}{% else %}{{ site.url | append: site.avatar | jsonify }}{% endif %},
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ site.url | append: page.url | jsonify }}
+      }
+    }
+    {% else %}
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ site.name | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "url": {{ site.url | jsonify }},
+      "author": {
+        "@type": "Person",
+        "name": {{ site.name | jsonify }}
+      }
+    }
+    {% endif %}
+    </script>

@@ -7,9 +7,23 @@
   position: relative;
   background-color: #272822;
   border-radius: 6px;
-  padding: 12px 16px;
+  padding: 14px 16px;
   margin: 20px 0;
   overflow: hidden;
+}
+
+.highlight-lang {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  user-select: none;
 }
 
 .highlight pre {
@@ -71,6 +85,12 @@ code.highlighter-rouge {
 
 .highlight:hover .copy-code-button {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .copy-code-button {
+    opacity: 0.7;
+  }
 }
 
 .copy-code-button:hover {

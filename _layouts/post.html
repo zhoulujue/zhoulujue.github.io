@@ -5,10 +5,19 @@ layout: default
 <article class="post">
   <h1>{{ page.title }}</h1>
 
+  {% assign words = content | strip_html | number_of_words %}
+  {% assign read_time = words | divided_by: 200 %}
+  {% if read_time == 0 %}{% assign read_time = 1 %}{% endif %}
+  <div class="post-meta-info">
+    <span class="post-date">📅 {{ page.date | date: "%Y年%m月%d日" }}</span>
+    <span class="post-meta-divider">·</span>
+    <span class="post-read-time">⏱ 约 {{ read_time }} 分钟阅读 ({{ words }} 字)</span>
+  </div>
+
   <div id="post-toc" class="post-toc" style="display: none;">
     <div class="post-toc-header">
       <span class="post-toc-title">目录 (TOC)</span>
-      <button type="button" id="toc-toggle-btn" class="toc-toggle-btn" aria-label="Toggle Table of Contents">[隐藏]</button>
+      <button type="button" id="toc-toggle-btn" class="toc-toggle-btn" aria-label="展开或收起目录">[隐藏]</button>
     </div>
     <ul id="post-toc-list" class="post-toc-list"></ul>
   </div>
@@ -24,12 +33,12 @@ layout: default
 
   <div class="post-navigation clearfix">
     {% if page.previous.url %}
-      <a class="prev-post" href="{{ site.baseurl }}{{ page.previous.url }}">
+      <a class="prev-post" href="{{ site.baseurl }}{{ page.previous.url }}" rel="prev" aria-label="上一篇: {{ page.previous.title }}">
         &larr; {{ page.previous.title }}
       </a>
     {% endif %}
     {% if page.next.url %}
-      <a class="next-post" href="{{ site.baseurl }}{{ page.next.url }}">
+      <a class="next-post" href="{{ site.baseurl }}{{ page.next.url }}" rel="next" aria-label="下一篇: {{ page.next.title }}">
         {{ page.next.title }} &rarr;
       </a>
     {% endif %}
@@ -53,12 +62,13 @@ document.addEventListener('DOMContentLoaded', function() {
   var toggleBtn = document.getElementById('toc-toggle-btn');
   if (!content || !tocContainer || !tocList) return;
 
-  var headings = content.querySelectorAll('h2, h3');
+  var headings = content.querySelectorAll('h2, h3, h4');
   if (headings.length < 2) return;
 
+  var tocItems = [];
   headings.forEach(function(heading, index) {
     if (!heading.id) {
-      heading.id = 'heading-' + index;
+      heading.id = 'section-' + index;
     }
     var li = document.createElement('li');
     li.className = 'toc-item toc-level-' + heading.tagName.toLowerCase();
@@ -68,10 +78,13 @@ document.addEventListener('DOMContentLoaded', function() {
     a.textContent = heading.textContent.trim();
     li.appendChild(a);
     tocList.appendChild(li);
+
+    tocItems.push({ heading: heading, li: li });
   });
 
   tocContainer.style.display = 'block';
 
+  // Toggle button collapse/expand
   if (toggleBtn) {
     toggleBtn.addEventListener('click', function() {
       if (tocList.style.display === 'none') {
@@ -81,6 +94,30 @@ document.addEventListener('DOMContentLoaded', function() {
         tocList.style.display = 'none';
         toggleBtn.textContent = '[展开]';
       }
+    });
+  }
+
+  // ScrollSpy with IntersectionObserver
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          tocItems.forEach(function(item) {
+            if (item.heading === entry.target) {
+              item.li.classList.add('active');
+            } else {
+              item.li.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -70% 0px',
+      threshold: 0
+    });
+
+    headings.forEach(function(heading) {
+      observer.observe(heading);
     });
   }
 });

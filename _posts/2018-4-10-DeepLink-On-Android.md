@@ -154,7 +154,7 @@ App，例如在 iOS 早期没有 UniversalLink 的时候，大家这样来唤起
 
 答案是：很大的可能是系统弹出一个对话框，列出若干个 App，问你想用哪一个打开。
 
-![选择App列表](../images/15262934775428.jpg)
+![选择App列表]({{ site.baseurl }}/images/15262934775428.jpg)
 
 
 这样体验其实不够好，因为用户路径变长了，**转化率** 将下降。所以我们应该尽可能去掉这个
@@ -174,7 +174,7 @@ Facebook 在2014年的F8开发者大会上公布了 AppLinks 协议，在Android
 这里也不在赘述细节，可以参考 Facebook 官方的介绍来实现，也特别简单。[Facebook AppLinks](https://developers.facebook.com/docs/applinks)
 
 
-![Facebook Bolts On Android](../images/app_links_bolt.png)
+![Facebook Bolts On Android]({{ site.baseurl }}/images/app_links_bolt.png)
 
 
 # 非自己的代码怎么办
@@ -194,7 +194,7 @@ package 填写 App 包名：`com.zhoulujue.news`，参考[Chrome官方 Intent �
 总所周知，微信是限制唤起 App 的行为的，坊间流传着各种微信唤起的 hack，但总是不知道什么时候就被封禁了，这里介绍
 微信官方的 *正规* 搞法：微下载链接：
 
-![微信微下载](../images/wei_xia_zai.jpeg)
+![微信微下载]({{ site.baseurl }}/images/wei_xia_zai.jpeg)
 
 
 如上图，知乎就使用了微下载来向知乎的 App 导流，这种方式 Android iOS 都是通用的，具体实现方式参考腾讯微信官方的[文档](http://wiki.open.qq.com/index.php?title=mobile/%E5%BA%94%E7%94%A8%E5%AE%9D%E5%BE%AE%E4%B8%8B%E8%BD%BD)。

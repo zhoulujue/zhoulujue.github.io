@@ -1,4 +1,4 @@
-<div id="search-modal" class="search-modal" style="display: none;">
+<div id="search-modal" class="search-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="search-input">
   <div class="search-modal-backdrop" id="search-backdrop"></div>
   <div class="search-modal-content">
     <div class="search-box">
@@ -6,8 +6,8 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="search-input" placeholder="搜索文章标题、关键词..." autocomplete="off" />
-      <button type="button" id="search-close" aria-label="Close search">&times;</button>
+      <input type="text" id="search-input" placeholder="搜索文章标题、关键词 (支持 ↑ ↓ 导航)..." autocomplete="off" />
+      <button type="button" id="search-close" aria-label="关闭搜索弹窗">&times;</button>
     </div>
     <div id="search-results" class="search-results"></div>
   </div>
@@ -22,6 +22,8 @@
   var searchInput = document.getElementById('search-input');
   var searchResults = document.getElementById('search-results');
   var searchData = null;
+  var selectedIndex = -1;
+  var debounceTimer = null;
 
   function loadSearchData() {
     if (searchData) return Promise.resolve(searchData);
@@ -39,14 +41,17 @@
   function openSearch(e) {
     if (e) e.preventDefault();
     searchModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
     loadSearchData();
-    setTimeout(function() { searchInput.focus(); }, 100);
+    setTimeout(function() { searchInput.focus(); }, 80);
   }
 
   function closeSearch() {
     searchModal.style.display = 'none';
+    document.body.style.overflow = '';
     searchInput.value = '';
     searchResults.innerHTML = '';
+    selectedIndex = -1;
   }
 
   if (searchToggle) {
@@ -56,6 +61,7 @@
   if (searchClose) searchClose.addEventListener('click', closeSearch);
   if (searchBackdrop) searchBackdrop.addEventListener('click', closeSearch);
 
+  // Global keyboard shortcuts
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && searchModal.style.display === 'flex') {
       closeSearch();
@@ -71,8 +77,49 @@
     }
   });
 
+  // Modal navigation shortcuts (Arrow keys & Enter)
+  searchInput.addEventListener('keydown', function(e) {
+    var items = searchResults.querySelectorAll('.search-item a');
+    if (!items.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % items.length;
+      updateSelection(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+      updateSelection(items);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < items.length) {
+        items[selectedIndex].click();
+      } else if (items.length > 0) {
+        items[0].click();
+      }
+    }
+  });
+
+  function updateSelection(items) {
+    items.forEach(function(item, idx) {
+      if (idx === selectedIndex) {
+        item.classList.add('selected');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+
+  // Debounced input search
   searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(performSearch, 150);
+  });
+
+  function performSearch() {
     var query = searchInput.value.trim().toLowerCase();
+    selectedIndex = -1;
     if (!query) {
       searchResults.innerHTML = '';
       return;
@@ -85,29 +132,40 @@
       });
 
       if (matches.length === 0) {
-        searchResults.innerHTML = '<div class="search-empty">未找到相关文章</div>';
+        searchResults.innerHTML = '<div class="search-empty">未找到与 “' + escapeHtml(query) + '” 相关的文章</div>';
         return;
       }
 
       var html = '<ul class="search-results-list">';
-      matches.slice(0, 10).forEach(function(post) {
+      matches.slice(0, 10).forEach(function(post, index) {
         html += '<li class="search-item">' +
                 '<a href="' + post.url + '">' +
                 '<div class="search-item-title">' + highlight(post.title, query) + '</div>' +
-                '<div class="search-item-date">' + post.date + '</div>' +
+                '<div class="search-item-date">' + escapeHtml(post.date) + '</div>' +
                 '<div class="search-item-snippet">' + highlight(post.content, query) + '</div>' +
                 '</a></li>';
       });
       html += '</ul>';
       searchResults.innerHTML = html;
     });
-  });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   function highlight(text, query) {
     if (!text) return '';
-    var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    var regex = new RegExp('(' + escaped + ')', 'gi');
-    return text.replace(regex, '<mark>$1</mark>');
+    var escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var safeText = escapeHtml(text);
+    var regex = new RegExp('(' + escapedQuery + ')', 'gi');
+    return safeText.replace(regex, '<mark>$1</mark>');
   }
 })();
 </script>
