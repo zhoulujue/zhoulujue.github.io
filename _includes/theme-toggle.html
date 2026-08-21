@@ -20,39 +20,72 @@
   var toggle = document.getElementById('theme-toggle');
   if (!toggle) return;
 
-  function getTheme() {
-    var stored = localStorage.getItem('theme');
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  function getSavedTheme() {
+    try {
+      return localStorage.getItem('theme');
+    } catch (e) {
+      return null;
+    }
   }
 
-  function updateIcons(theme) {
+  function getSystemTheme() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function getCurrentTheme() {
+    var attr = document.documentElement.getAttribute('data-theme');
+    if (attr) return attr;
+    var saved = getSavedTheme();
+    if (saved) return saved;
+    return getSystemTheme();
+  }
+
+  function updateUI(theme) {
     var sun = toggle.querySelector('.sun-icon');
     var moon = toggle.querySelector('.moon-icon');
     if (!sun || !moon) return;
     if (theme === 'dark') {
-      sun.style.display = 'none';
-      moon.style.display = 'block';
+      sun.style.setProperty('display', 'none', 'important');
+      moon.style.setProperty('display', 'block', 'important');
+      toggle.setAttribute('aria-label', '切换为浅色模式');
+      toggle.setAttribute('title', '切换为浅色模式');
     } else {
-      sun.style.display = 'block';
-      moon.style.display = 'none';
+      sun.style.setProperty('display', 'block', 'important');
+      moon.style.setProperty('display', 'none', 'important');
+      toggle.setAttribute('aria-label', '切换为深色模式');
+      toggle.setAttribute('title', '切换为深色模式');
     }
   }
 
-  function setTheme(theme) {
+  function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    updateIcons(theme);
+    if (document.body) {
+      document.body.setAttribute('data-theme', theme);
+    }
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (e) {}
+    updateUI(theme);
   }
 
-  // Initial sync
-  var currentTheme = document.documentElement.getAttribute('data-theme') || getTheme();
-  updateIcons(currentTheme);
+  // Initial Sync
+  var initialTheme = getCurrentTheme();
+  applyTheme(initialTheme);
 
-  toggle.addEventListener('click', function() {
-    var current = document.documentElement.getAttribute('data-theme') || getTheme();
+  toggle.addEventListener('click', function(e) {
+    e.preventDefault();
+    var current = getCurrentTheme();
     var target = current === 'dark' ? 'light' : 'dark';
-    setTheme(target);
+    applyTheme(target);
   });
+
+  // Listen to system theme changes if user hasn't explicitly set preference
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+      if (!getSavedTheme()) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
 })();
 </script>
