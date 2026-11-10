@@ -1,0 +1,2 @@
+User-Agent: __usage_ai-training
+Disallow: /
