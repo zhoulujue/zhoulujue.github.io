@@ -30,12 +30,6 @@ footer-links:
   stackoverflow: users/1602964/michael-zhou # your stackoverflow profile, e.g. "users/50476/bart-kiers"
   youtube: # channel/<your_long_string> or user/<user-name>
 
-# Enter your Disqus shortname to enable commenting on posts
-disqus: blog-zhoulujue-com
-
-# Enter your Google Analytics web tracking code (GA4 e.g. G-XXXXXXXXXX or Universal UA-XXXXX-Y)
-google_analytics: UA-118649966-1
-
 # Your website URL (e.g. http://barryclark.github.io or http://www.barryclark.co)
 # Used for Sitemap.xml and your RSS feed
 url: https://blog.zhoulujue.com
